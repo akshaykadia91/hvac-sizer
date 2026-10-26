@@ -1,0 +1,1122 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>HVAC Sizer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#1B5592">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: phone-first instrument panel. Sticky module-coloured app bar, design basis folds into one summary line,
+   answer card first, detail lists below, fixed bottom tab bar. Pipe = steel blue, Duct = teal (matches the logos). */
+:root {
+  --bg: #EDF1F5;
+  --surface: #FFFFFF;
+  --sunken: #F4F7FA;
+  --ink: #12263A;
+  --muted: #5B6C7D;
+  --line: #D6DFE8;
+  --pipe: #1B5592;
+  --duct: #137569;
+  --water: #1FA9DD;
+  --good: #1D8049;
+  --good-bg: #DFF3E6;
+  --warn: #B76100;
+  --warn-bg: #FCEBD5;
+  --bad: #BF3328;
+  --bad-bg: #FBE1DE;
+  --vel-bg: #E2ECF8;
+  --on-acc: #FFFFFF;
+  --f-ui: "Barlow", Roboto, "Segoe UI", system-ui, sans-serif;
+  --f-num: "Barlow Semi Condensed", "Roboto Condensed", "Arial Narrow", Roboto, sans-serif;
+  --acc: var(--pipe);
+  --acc-tint: #E3EDF8;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C151E; --surface: #14212D; --sunken: #101B25; --ink: #E3ECF4; --muted: #93A5B6; --line: #253748;
+    --pipe: #5D9FE3; --duct: #3FB4A6; --water: #4CC3EE;
+    --good: #50C27F; --good-bg: #173426; --warn: #F0A445; --warn-bg: #3A2A12; --bad: #F2716A; --bad-bg: #3D1C1A;
+    --vel-bg: #1A2C40; --on-acc: #08121B; --acc-tint: #1A2E44; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C151E; --surface: #14212D; --sunken: #101B25; --ink: #E3ECF4; --muted: #93A5B6; --line: #253748;
+  --pipe: #5D9FE3; --duct: #3FB4A6; --water: #4CC3EE;
+  --good: #50C27F; --good-bg: #173426; --warn: #F0A445; --warn-bg: #3A2A12; --bad: #F2716A; --bad-bg: #3D1C1A;
+  --vel-bg: #1A2C40; --on-acc: #08121B; --acc-tint: #1A2E44; color-scheme: dark;
+}
+body[data-mod="duct"] { --acc: var(--duct); --acc-tint: color-mix(in srgb, var(--duct) 14%, var(--surface)); }
+body[data-mod="pipe"], body[data-mod="help"] { --acc-tint: color-mix(in srgb, var(--pipe) 13%, var(--surface)); }
+
+* { box-sizing: border-box; }
+html, body { background: var(--bg); }
+body { color: var(--ink); font: 15px/1.45 var(--f-ui); -webkit-tap-highlight-color: transparent; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--acc); }
+.gut { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.inner { max-width: 760px; margin: 0 auto; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--water); outline-offset: 2px; }
+.num { font-family: var(--f-num); font-variant-numeric: tabular-nums; }
+
+/* ---------- app bar ---------- */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--acc); color: var(--on-acc); transition: background .25s; }
+.bar .inner { display: flex; align-items: center; gap: 12px; padding-block: 10px; }
+.bar img { width: 38px; height: 38px; border-radius: 9px; flex: none; box-shadow: 0 1px 0 rgba(255,255,255,.25) inset; }
+.brand { flex: 1; min-width: 0; line-height: 1.1; }
+.brand b { display: block; font: 700 19px/1.1 var(--f-num); letter-spacing: .01em; }
+.brand span { font-size: 12.5px; opacity: .82; }
+.useg { display: flex; border: 1.5px solid currentColor; border-radius: 999px; overflow: hidden; flex: none; }
+.useg button { background: transparent; border: 0; padding: 5px 11px; font-weight: 600; font-size: 13px; letter-spacing: .04em; color: inherit; cursor: pointer; }
+.useg button.on { background: var(--on-acc); color: var(--acc); }
+
+main { padding-block: 14px calc(84px + env(safe-area-inset-bottom, 0px)); }
+.mod { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+
+/* ---------- segmented controls ---------- */
+.seg { display: flex; background: var(--sunken); border: 1px solid var(--line); border-radius: 11px; padding: 3px; gap: 3px; }
+.seg button { flex: 1; min-width: 0; border: 0; background: transparent; padding: 8px 6px; border-radius: 8px; font-weight: 600; font-size: 14px; color: var(--muted); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seg button.on { background: var(--surface); color: var(--acc); box-shadow: 0 1px 3px rgba(10,30,50,.16); }
+.seg.sm button { padding: 5px 4px; font-size: 13px; }
+.views { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 58px); z-index: 5; background: var(--bg); padding-block: 2px 4px; }
+
+/* ---------- cards ---------- */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.pad { padding: 14px; }
+h2 { font: 700 13px/1.2 var(--f-ui); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 6px 2px 0; }
+
+/* design basis (collapsible) */
+details.basis > summary { list-style: none; cursor: pointer; padding: 12px 14px; display: flex; gap: 10px; align-items: center; }
+details.basis > summary::-webkit-details-marker { display: none; }
+.b-ico { width: 34px; height: 34px; border-radius: 9px; background: var(--acc-tint); color: var(--acc); display: grid; place-items: center; flex: none; }
+.b-txt { flex: 1; min-width: 0; }
+.b-txt b { display: block; font-size: 14.5px; }
+.b-txt span { display: block; font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.b-edit { font-size: 13px; font-weight: 600; color: var(--acc); flex: none; }
+details[open] .b-txt span { white-space: normal; }
+details[open] .b-edit::after { content: " \25B4"; }
+details:not([open]) .b-edit::after { content: " \25BE"; }
+.fields { border-top: 1px solid var(--line); padding: 4px 14px 14px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+.grp { padding-block: 12px 4px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.grp + .grp { border-top: 1px dashed var(--line); }
+.grp-h { font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--acc); }
+.f { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.f > label, .f > .lab { font-weight: 500; }
+.ctl { display: flex; gap: 6px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
+.in { width: 86px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--sunken); text-align: right; font-family: var(--f-num); font-size: 16px; font-variant-numeric: tabular-nums; }
+.in:focus { border-color: var(--acc); background: var(--surface); outline: none; box-shadow: 0 0 0 3px var(--acc-tint); }
+select.sel { padding: 8px 28px 8px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--sunken) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235B6C7D'/%3E%3C/svg%3E") no-repeat right 10px center; appearance: none; -webkit-appearance: none; max-width: 100%; }
+select.wide { width: 100%; }
+.note { font-size: 12.5px; color: var(--muted); }
+.readout { background: var(--acc-tint); color: var(--acc); border-radius: 10px; padding: 9px 12px; font-weight: 600; font-size: 13.5px; }
+.readout.err { background: var(--bad-bg); color: var(--bad); }
+.chk { display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; }
+.chk input { width: 19px; height: 19px; accent-color: var(--acc); margin: 0; }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; border: 1px solid var(--line); background: var(--sunken); border-radius: 10px; padding: 6px 11px; text-align: left; cursor: pointer; line-height: 1.2; }
+.chip b { display: block; font-size: 13.5px; }
+.chip small { font-size: 11.5px; color: var(--muted); }
+.chip.on { border-color: var(--acc); background: var(--acc-tint); }
+.chip.on b { color: var(--acc); }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 9px; padding: 8px 12px; font-weight: 600; font-size: 13.5px; cursor: pointer; color: var(--acc); }
+.btn:active { background: var(--sunken); }
+
+/* ---------- load input & answer ---------- */
+.ask { padding: 14px 14px 12px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.ask label { font-weight: 600; font-size: 13px; color: var(--muted); letter-spacing: .02em; }
+.bigin { display: flex; gap: 8px; align-items: stretch; }
+.bigin input { flex: 1; min-width: 0; width: 100%; font: 600 30px/1 var(--f-num); font-variant-numeric: tabular-nums; padding: 8px 12px; border: 1.5px solid var(--line); border-radius: 11px; background: var(--sunken); }
+.bigin input:focus { outline: none; border-color: var(--acc); background: var(--surface); box-shadow: 0 0 0 3px var(--acc-tint); }
+.bigin select { font: 600 17px var(--f-num); padding-inline: 12px 28px; border-radius: 11px; }
+.equiv { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.answer { border-top: 1px solid var(--line); }
+.ans-head { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; padding: 14px 14px 10px; background: var(--acc-tint); }
+.ans-head.ok { background: var(--good-bg); }
+.ans-head.bad { background: var(--bad-bg); }
+.ans-k { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.ans-size { font: 700 46px/1 var(--f-num); letter-spacing: -.01em; color: var(--good); }
+.ans-head.bad .ans-size { color: var(--bad); font-size: 30px; }
+.ans-sub { font-size: 13px; color: var(--muted); padding-bottom: 5px; }
+.ans-alt { margin-left: auto; text-align: right; }
+.ans-alt .ans-size { font-size: 28px; color: var(--ink); }
+.ruler { height: 8px; margin: 0 14px; background: repeating-linear-gradient(90deg, var(--line) 0 1.5px, transparent 1.5px 10%); background-size: 100% 100%; mask: linear-gradient(#000 0 0); }
+.ans-text { padding: 8px 14px 4px; font-size: 14px; }
+.gauges { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 8px 14px 14px; }
+.gauge.span { grid-column: 1 / -1; }
+.gauge { background: var(--sunken); border-radius: 10px; padding: 9px 10px 8px; min-width: 0; }
+.g-top { display: flex; justify-content: space-between; align-items: baseline; gap: 2px 6px; flex-wrap: wrap; }
+.g-lab { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.g-val { font: 700 19px/1.1 var(--f-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.g-bar { position: relative; height: 7px; border-radius: 4px; background: var(--line); margin: 7px 0 5px; overflow: hidden; }
+.g-bar i { position: absolute; inset: 0 auto 0 0; border-radius: 4px; background: var(--good); transition: width .25s; }
+.g-bar::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), var(--surface) calc(10% - 1px) 10%); opacity: .55; }
+.gauge.warn .g-bar i { background: var(--warn); } .gauge.bad .g-bar i { background: var(--bad); }
+.gauge.warn .g-val { color: var(--warn); } .gauge.bad .g-val { color: var(--bad); } .gauge.good .g-val { color: var(--good); }
+.g-sub { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* ---------- size lists ---------- */
+.list { display: grid; }
+.row { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,.9fr) minmax(0,1.25fr) minmax(0,1.3fr); gap: 8px; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); }
+.row:first-child { border-top: 0; }
+.row b { display: block; font: 600 17px/1.15 var(--f-num); font-variant-numeric: tabular-nums; }
+.row small { display: block; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row.small { opacity: .5; }
+#d-list .row { grid-template-columns: minmax(0,1.35fr) minmax(0,.7fr) minmax(0,1fr) minmax(0,1.15fr); }
+#d-list .r-size b { font-size: 16px; }
+.row.sel { background: var(--good-bg); }
+.row.sel .r-size b { color: var(--good); }
+.mini { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; margin-bottom: 4px; }
+.mini i { display: block; height: 100%; background: var(--good); }
+.mini.warn i { background: var(--warn); } .mini.bad i { background: var(--bad); }
+.list-h { display: grid; grid-template-columns: inherit; }
+.row.hd { padding-block: 8px; background: var(--sunken); border-radius: 14px 14px 0 0; }
+.row.hd span { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.pill { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.f { background: var(--warn-bg); color: var(--warn); }
+.pill.v { background: var(--vel-bg); color: var(--acc); }
+.pill.ok { background: var(--good-bg); color: var(--good); }
+.pill.no { background: var(--sunken); color: var(--muted); }
+
+/* ---------- tables ---------- */
+.tools { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tools .note { flex: 1; min-width: 180px; }
+.tw { overflow-x: auto; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); }
+table.t { border-collapse: separate; border-spacing: 0; width: 100%; font-variant-numeric: tabular-nums; font-size: 14px; }
+.t th { position: sticky; top: 0; background: var(--acc); color: var(--on-acc); font-size: 11.5px; font-weight: 700; letter-spacing: .03em; padding: 9px 8px; text-align: center; line-height: 1.2; white-space: normal; min-width: 64px; }
+.t td { padding: 8px; text-align: center; border-top: 1px solid var(--line); white-space: nowrap; font-family: var(--f-num); font-size: 15px; }
+.t th:first-child, .t td:first-child { position: sticky; left: 0; z-index: 1; }
+.t td:first-child { background: var(--surface); font-weight: 700; text-align: left; box-shadow: 1px 0 0 var(--line); }
+.t th:first-child { z-index: 2; }
+.t td.hi { background: var(--good-bg); color: var(--good); font-weight: 700; font-size: 16px; }
+.t tr:nth-child(even) td:not(.hi):not(:first-child) { background: var(--sunken); }
+.t.mx td { min-width: 62px; font-size: 14px; }
+.t.mx td.over { color: var(--muted); background: var(--sunken); opacity: .55; }
+.t.mx td.na { background: var(--sunken); }
+.t.mx td.v { background: var(--vel-bg); }
+.t.mx td:first-child, .t.mx th:first-child { background: var(--acc); color: var(--on-acc); box-shadow: none; text-align: center; font-size: 12px; }
+.tw.mx { max-height: 65vh; overflow: auto; }
+.legend { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* key / value list */
+dl.kv { margin: 0; display: grid; }
+dl.kv div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 14px; border-top: 1px solid var(--line); }
+dl.kv dt { color: var(--muted); font-size: 13.5px; }
+dl.kv dd { margin: 0; font: 600 16px var(--f-num); text-align: right; font-variant-numeric: tabular-nums; }
+dl.kv dd.good { color: var(--good); } dl.kv dd.bad { color: var(--bad); } dl.kv dd.warn { color: var(--warn); }
+.cv-in { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 14px; }
+.cv-h { font-weight: 700; font-size: 15px; padding: 14px 14px 0; }
+.err-box { background: var(--bad-bg); color: var(--bad); border-radius: 12px; padding: 12px 14px; font-weight: 600; }
+
+/* help */
+.help h3 { font: 700 18px var(--f-num); margin: 0 0 6px; color: var(--acc); }
+.help p, .help li { font-size: 14.5px; max-width: 65ch; }
+.help ol, .help ul { padding-left: 20px; margin: 6px 0; }
+.help li { margin-bottom: 4px; }
+.help .card { padding: 16px; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; vertical-align: middle; margin-right: 4px; }
+
+/* bottom nav */
+nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 9; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+nav.tabs .tin { display: flex; max-width: 760px; margin: 0 auto; }
+nav.tabs { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); color: var(--ink); }
+nav.tabs button { flex: 1; border: 0; background: none; padding: 8px 4px 9px; display: grid; justify-items: center; gap: 2px; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; position: relative; }
+nav.tabs svg { width: 25px; height: 25px; }
+nav.tabs button.on { color: var(--acc); }
+nav.tabs button.on::before { content: ""; position: absolute; top: 0; left: 30%; right: 30%; height: 3px; border-radius: 0 0 3px 3px; background: var(--acc); }
+
+.toast { position: fixed; left: 50%; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 999px; font-weight: 600; font-size: 13.5px; opacity: 0; pointer-events: none; transition: .2s; z-index: 20; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 420px) {
+  .row { grid-template-columns: minmax(0,.95fr) minmax(0,.85fr) minmax(0,1.25fr) minmax(0,1.15fr); gap: 6px; padding-inline: 10px; }
+  .ans-size { font-size: 40px; }
+}
+/* ---------- desktop: tabs in the header, design basis as a left column ---------- */
+@media (min-width: 900px) {
+  .inner { max-width: 1240px; }
+  .bar .inner { gap: 18px; padding-block: 8px; }
+  nav.tabs { position: static; background: transparent; border: 0; padding: 0; margin-left: 12px; color: var(--on-acc); flex: none; }
+  nav.tabs .tin { gap: 4px; max-width: none; }
+  nav.tabs button { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 9px; font-size: 14.5px; color: inherit; opacity: .78; }
+  nav.tabs button:hover { opacity: 1; background: rgba(255,255,255,.12); }
+  nav.tabs button.on { color: inherit; opacity: 1; background: rgba(255,255,255,.2); }
+  nav.tabs button.on::before { display: none; }
+  nav.tabs svg { width: 20px; height: 20px; }
+  .brand { flex: none; }
+  .bar .useg { margin-left: auto; }
+  main { padding-block: 20px 32px; }
+  #m-pipe, #m-duct { grid-template-columns: 380px minmax(0, 1fr); grid-template-areas: "basis views" "basis main"; column-gap: 20px; align-items: start; }
+  #m-pipe > .views, #m-duct > .views { grid-area: views; position: static; }
+  #m-pipe > details.basis, #m-duct > details.basis { grid-area: basis; position: sticky; top: 76px; max-height: calc(100vh - 92px); overflow: auto; }
+  #m-pipe > div.mod, #m-duct > div.mod { grid-area: main; }
+  details.basis > summary { pointer-events: none; }
+  details.basis .b-edit { display: none; }
+  .gauges { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+  .gauge.span { grid-column: auto; }
+  .ans-size { font-size: 56px; }
+  .tw.mx { max-height: calc(100vh - 230px); }
+  #m-help { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .toast { bottom: 28px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head><body>
+
+
+<header class="bar gut">
+  <div class="inner">
+    <img id="logo" alt="" src="">
+    <div class="brand"><b id="brand-t">Pipe Sizer</b><span>HVAC Sizer by Akshay</span></div>
+<nav class="tabs" aria-label="Sections">
+  <div class="tin">
+    <button data-mod="pipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v8a6 6 0 0 0 6 6h7"/><path d="M4 3h4M19 15v4"/><path d="M21 20.5a1.5 1.5 0 0 1-3 0c0-1 1.5-2.5 1.5-2.5S21 19.5 21 20.5z" fill="currentColor" stroke="none"/></svg>Pipe</button>
+    <button data-mod="duct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M3 9h11v9H3z"/><path d="M3 9l5-4h11l-5 4M14 18l5-4V5"/></svg>Duct</button>
+    <button data-mod="help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>Help</button>
+  </div>
+</nav>
+    <div class="useg" id="units" role="group" aria-label="Result units">
+      <button data-u="SI">SI</button><button data-u="IP">IP</button>
+    </div>
+  </div>
+</header>
+
+<main class="gut">
+<div class="inner">
+
+<!-- ======================= PIPE ======================= -->
+<section class="mod" id="m-pipe">
+  <div class="views"><div class="seg" data-key="P.view" data-opts="size:Size a pipe|cap:Capacity table"></div></div>
+
+  <details class="card basis" id="p-basis">
+    <summary>
+      <span class="b-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></span>
+      <span class="b-txt"><b>Design basis</b><span id="p-sum"></span></span>
+      <span class="b-edit">Edit</span>
+    </summary>
+    <div class="fields">
+      <div class="grp">
+        <div class="grp-h">System</div>
+        <div class="seg" data-key="P.sys" data-opts="chw:Chilled water|cdw:Condenser water"></div>
+      </div>
+      <div class="grp">
+        <div class="grp-h">Pipe material</div>
+        <select class="sel wide" id="p-mat" data-key="P.mat" data-num aria-label="Pipe material"></select>
+        <div class="note" id="p-matnote"></div>
+        <div class="f"><label for="p-rough">Inside roughness</label><div class="ctl"><input class="in" id="p-rough" data-key="P.rough" inputmode="decimal"><span class="note">mm</span></div></div>
+      </div>
+      <div class="grp">
+        <div class="grp-h">Water temperatures</div>
+        <div class="f"><span class="lab">Unit</span><div class="ctl"><div class="seg sm" style="width:110px" data-key="P.tu" data-opts="C:°C|F:°F"></div></div></div>
+        <div class="f"><label for="p-ts">Supply</label><div class="ctl"><input class="in" id="p-ts" data-key="P.ts" inputmode="decimal"></div></div>
+        <div class="f"><label for="p-tr">Return</label><div class="ctl"><input class="in" id="p-tr" data-key="P.tr" inputmode="decimal"></div></div>
+        <div class="f" id="p-hrfrow"><label for="p-hrf">Heat rejection factor</label><div class="ctl"><input class="in" id="p-hrf" data-key="P.hrf" inputmode="decimal"></div></div>
+        <div class="note" id="p-hrfnote">Condenser water carries the cooling load plus compressor heat. 1.25 suits a chiller with COP about 4.</div>
+        <div class="readout" id="p-dt"></div>
+      </div>
+      <div class="grp">
+        <div class="grp-h">Design limits</div>
+        <div class="chips" id="p-presets"></div>
+        <div class="f"><label class="chk"><input type="checkbox" id="p-useF" data-key="P.useF">Max friction</label>
+          <div class="ctl"><input class="in" id="p-f" data-key="P.f" inputmode="decimal" aria-label="Max friction"><select class="sel" id="p-fu" data-key="P.fu" data-num aria-label="Friction unit"><option value="0">ft wc/100 ft</option><option value="1">Pa/m</option><option value="2">mm wc/m</option><option value="3">m wc/100 m</option></select></div></div>
+        <div class="f"><label class="chk"><input type="checkbox" id="p-useV" data-key="P.useV">Max velocity</label>
+          <div class="ctl"><input class="in" id="p-v" data-key="P.v" inputmode="decimal" aria-label="Max velocity"><div class="seg sm" style="width:110px" data-key="P.vu" data-opts="0:m/s|1:fps"></div></div></div>
+        <div class="note">Each pipe size is loaded until it reaches whichever limit comes first.</div>
+        <div class="note" id="p-props"></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- size a pipe -->
+  <div id="pv-size" class="mod">
+    <div class="card">
+      <div class="ask">
+        <label for="p-load">Cooling load or water flow</label>
+        <div class="bigin"><input id="p-load" data-key="P.load" inputmode="decimal"><select class="sel" id="p-lu" data-key="P.lu" data-num aria-label="Load unit"><option value="0">TR</option><option value="1">kW</option><option value="2">USgpm</option><option value="3">L/s</option><option value="4">m³/h</option></select></div>
+        <div class="equiv" id="p-equiv"></div>
+      </div>
+      <div class="answer" id="p-answer"></div>
+    </div>
+    <h2>Nearby sizes at this load</h2>
+    <div class="card list" id="p-list"></div>
+  </div>
+
+  <!-- capacity table -->
+  <div id="pv-cap" class="mod" hidden>
+    <div class="tools"><span class="note" id="p-capnote"></span><button class="btn" data-copy="p-table">Copy table</button></div>
+    <div class="legend"><span class="pill v">Limited by velocity</span><span class="pill f">Limited by friction</span></div>
+    <div class="tw"><table class="t" id="p-table"></table></div>
+  </div>
+</section>
+
+<!-- ======================= DUCT ======================= -->
+<section class="mod" id="m-duct" hidden>
+  <div class="views"><div class="seg" data-key="D.view" data-opts="size:Size|round:Round|chart:Chart|conv:Convert"></div></div>
+
+  <details class="card basis" id="d-basis">
+    <summary>
+      <span class="b-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></span>
+      <span class="b-txt"><b>Design basis</b><span id="d-sum"></span></span>
+      <span class="b-edit">Edit</span>
+    </summary>
+    <div class="fields">
+      <div class="grp">
+        <div class="grp-h">Duct material</div>
+        <select class="sel wide" id="d-mat" data-key="D.mat" data-num aria-label="Duct material"></select>
+        <div class="note" id="d-matnote"></div>
+        <div class="f"><label for="d-rough">Inside roughness</label><div class="ctl"><input class="in" id="d-rough" data-key="D.rough" inputmode="decimal"><span class="note">mm</span></div></div>
+      </div>
+      <div class="grp">
+        <div class="grp-h">Air conditions</div>
+        <div class="f"><label for="d-t">Air temperature</label><div class="ctl"><input class="in" id="d-t" data-key="D.t" inputmode="decimal"><div class="seg sm" style="width:96px" data-key="D.tu" data-opts="C:°C|F:°F"></div></div></div>
+        <div class="f"><label for="d-alt">Site altitude</label><div class="ctl"><input class="in" id="d-alt" data-key="D.alt" inputmode="decimal"><div class="seg sm" style="width:96px" data-key="D.au" data-opts="m:m|ft:ft"></div></div></div>
+        <div class="f"><label for="d-cpt">Airflow per TR</label><div class="ctl"><input class="in" id="d-cpt" data-key="D.cpt" inputmode="decimal"><span class="note">CFM/TR</span></div></div>
+        <div class="readout" id="d-air"></div>
+      </div>
+      <div class="grp">
+        <div class="grp-h">Design limits</div>
+        <div class="chips" id="d-presets"></div>
+        <div class="f"><label class="chk"><input type="checkbox" id="d-useF" data-key="D.useF">Max friction</label>
+          <div class="ctl"><input class="in" id="d-f" data-key="D.f" inputmode="decimal" aria-label="Max friction"><select class="sel" id="d-fu" data-key="D.fu" data-num aria-label="Friction unit"><option value="0">in wc/100 ft</option><option value="1">Pa/m</option><option value="2">mm wc/m</option></select></div></div>
+        <div class="f"><label class="chk"><input type="checkbox" id="d-useV" data-key="D.useV">Max velocity</label>
+          <div class="ctl"><input class="in" id="d-v" data-key="D.v" inputmode="decimal" aria-label="Max velocity"><div class="seg sm" style="width:110px" data-key="D.vu" data-opts="0:fpm|1:m/s"></div></div></div>
+        <div class="note">Each duct is loaded until it reaches whichever limit comes first.</div>
+      </div>
+      <div class="grp">
+        <div class="grp-h">Rectangular duct</div>
+        <div class="f"><span class="lab">Sizes in</span><div class="ctl"><div class="seg sm" style="width:110px" data-key="D.dim" data-opts="mm:mm|in:inch"></div></div></div>
+        <div class="f"><label for="d-step">Size step</label><div class="ctl"><input class="in" id="d-step" data-key="D.step" inputmode="decimal"><span class="note du">mm</span></div></div>
+        <div class="f"><label for="d-ar">Max aspect ratio</label><div class="ctl"><input class="in" id="d-ar" data-key="D.ar" inputmode="decimal"><span class="note">: 1</span></div></div>
+        <div class="f"><label class="chk"><input type="checkbox" id="d-useH" data-key="D.useH">Max duct height</label><div class="ctl"><input class="in" id="d-h" data-key="D.h" inputmode="decimal" aria-label="Max duct height"><span class="note du">mm</span></div></div>
+        <div class="note">Tick max height when ceiling space limits the duct depth.</div>
+      </div>
+    </div>
+  </details>
+
+  <!-- size a duct -->
+  <div id="dv-size" class="mod">
+    <div class="card">
+      <div class="ask">
+        <label for="d-q">Airflow</label>
+        <div class="bigin"><input id="d-q" data-key="D.q" inputmode="decimal"><select class="sel" id="d-qu" data-key="D.qu" data-num aria-label="Airflow unit"><option value="0">CFM</option><option value="1">L/s</option><option value="2">m³/h</option><option value="3">m³/s</option><option value="4">TR</option></select></div>
+        <div class="equiv" id="d-equiv"></div>
+      </div>
+      <div class="answer" id="d-answer"></div>
+    </div>
+    <h2>Rectangular options (one per duct height)</h2>
+    <div class="card list" id="d-list"></div>
+  </div>
+
+  <!-- round capacity -->
+  <div id="dv-round" class="mod" hidden>
+    <div class="tools"><span class="note" id="d-rnote"></span><button class="btn" data-copy="d-rtable">Copy table</button></div>
+    <div class="legend"><span class="pill v">Limited by velocity</span><span class="pill f">Limited by friction</span></div>
+    <div class="tw"><table class="t" id="d-rtable"></table></div>
+  </div>
+
+  <!-- rectangular chart -->
+  <div id="dv-chart" class="mod" hidden>
+    <div class="tools"><span class="note">Max airflow for each width × height. Rows = height, columns = width.</span>
+      <div class="ctl"><select class="sel" id="d-chu" data-key="D.chu" data-num aria-label="Chart unit"><option value="0">CFM</option><option value="1">L/s</option><option value="2">m³/h</option><option value="3">TR</option></select><button class="btn" data-copy="d-ctable">Copy</button></div></div>
+    <div class="legend"><span class="pill v">Velocity limited</span><span class="pill no">Above max aspect ratio</span></div>
+    <div class="tw mx"><table class="t mx" id="d-ctable"></table></div>
+  </div>
+
+  <!-- converter -->
+  <div id="dv-conv" class="mod" hidden>
+    <div class="card">
+      <div class="cv-h">Rectangular → equivalent round</div>
+      <div class="cv-in">
+        <div class="f"><label for="d-cvw">Width</label><div class="ctl"><input class="in" id="d-cvw" data-key="D.cvw" inputmode="decimal"><span class="note du">mm</span></div></div>
+        <div class="f"><label for="d-cvh">Height</label><div class="ctl"><input class="in" id="d-cvh" data-key="D.cvh" inputmode="decimal"><span class="note du">mm</span></div></div>
+        <div class="f"><label for="d-cvq">Airflow (optional)</label><div class="ctl"><input class="in" id="d-cvq" data-key="D.cvq" inputmode="decimal"><select class="sel" id="d-cvqu" data-key="D.cvqu" data-num aria-label="Airflow unit"><option value="0">CFM</option><option value="1">L/s</option><option value="2">m³/h</option><option value="3">m³/s</option><option value="4">TR</option></select></div></div>
+      </div>
+      <dl class="kv" id="d-cv1"></dl>
+    </div>
+    <div class="card">
+      <div class="cv-h">Round → equivalent rectangular</div>
+      <div class="cv-in">
+        <div class="f"><label for="d-cvd">Round diameter</label><div class="ctl"><input class="in" id="d-cvd" data-key="D.cvd" inputmode="decimal"><span class="note du">mm</span></div></div>
+        <div class="f"><label for="d-cvh2">Wanted height</label><div class="ctl"><input class="in" id="d-cvh2" data-key="D.cvh2" inputmode="decimal"><span class="note du">mm</span></div></div>
+      </div>
+      <dl class="kv" id="d-cv2"></dl>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= HELP ======================= -->
+<section class="mod help" id="m-help" hidden>
+  <div class="card">
+    <h3>Pipe Sizer</h3>
+    <ol>
+      <li>Open <b>Design basis</b> and pick chilled or condenser water, the pipe material (MS Class C, GI Class B / C or uPVC), supply and return water temperature.</li>
+      <li>Set the <b>max friction</b> and <b>max velocity</b>, or tap a preset.</li>
+      <li><b>Size a pipe</b>: type the load in TR, kW or a flow. The smallest pipe that stays inside both limits is shown.</li>
+      <li><b>Capacity table</b>: the maximum TR every pipe size can carry.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3>Duct Sizer</h3>
+    <ol>
+      <li>In <b>Design basis</b> choose the duct material, air temperature, site altitude and CFM per TR.</li>
+      <li>Set the friction and velocity limits, the rectangular size step, max aspect ratio and, for tight ceilings, max duct height.</li>
+      <li><b>Size</b>: enter the airflow. You get the best rectangular size (least sheet metal within your rules) and the round size.</li>
+      <li><b>Round</b> and <b>Chart</b> list the max airflow of every size. <b>Convert</b> changes rectangular to round and back.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3>Reading the colours</h3>
+    <p><span class="sw" style="background:var(--good)"></span>Green: comfortably inside the limit.<br>
+       <span class="sw" style="background:var(--warn)"></span>Orange: above 85 % of the limit, little spare capacity.<br>
+       <span class="sw" style="background:var(--bad)"></span>Red: over the limit, the size is too small.</p>
+    <p>The <b>SI / IP</b> switch at the top changes the result units. Each input keeps its own unit and converts when you change it.</p>
+  </div>
+  <div class="card">
+    <h3>Typical design values</h3>
+    <ul>
+      <li>Chilled and condenser water, steel pipe: friction 1.5 to 4 ft wc/100 ft (150 to 400 Pa/m), velocity up to 2.4 to 3 m/s in large mains, 1.2 to 1.5 m/s near quiet rooms.</li>
+      <li>uPVC pipe: keep velocity near 1.5 m/s and check the pressure and temperature rating.</li>
+      <li>Low-pressure supply duct: 0.06 to 0.1 in wc/100 ft. Mains 1200 to 1800 fpm, branches 600 to 1000 fpm.</li>
+      <li>Comfort air conditioning: 350 to 450 CFM per TR. Aspect ratio up to 4 : 1.</li>
+      <li>GI sheet gauge by larger side (IS 655 / CPWD): up to 750 mm 24 G, to 1500 mm 22 G, to 2250 mm 20 G, above that 18 G.</li>
+    </ul>
+    <p class="note">These are common practice. Follow your project specification.</p>
+  </div>
+  <div class="card">
+    <h3>How it is calculated</h3>
+    <ul>
+      <li>Friction: Darcy-Weisbach with the Colebrook friction factor and the pipe or duct roughness.</li>
+      <li>Water density, viscosity and specific heat at the mean of supply and return temperature. Air density from temperature and altitude.</li>
+      <li>Chilled water flow per TR = 3.517 kW ÷ (density × specific heat × ΔT). Condenser water is multiplied by the heat rejection factor.</li>
+      <li>Pipe bores: MS / GI Class C = IS 1239 Heavy, GI Class B = IS 1239 Medium, MS DN 200 and above = IS 3589, uPVC = Schedule 40.</li>
+      <li>Rectangular ducts use the Huebscher equivalent diameter De = 1.30 (a·b)<sup>0.625</sup> ÷ (a+b)<sup>0.25</sup>.</li>
+    </ul>
+    <p class="note">1 TR = 3.517 kW · 1 L/s = 15.85 USgpm · 1 CFM = 0.4719 L/s · 1 ft wc/100 ft = 98.07 Pa/m · 1 in wc/100 ft = 8.17 Pa/m</p>
+  </div>
+  <div class="card">
+    <h3>About</h3>
+    <p>HVAC Sizer by Akshay. Pipe and duct sizing for chilled water, condenser water and air distribution. Your inputs are saved on this phone.</p>
+    <button class="btn" id="reset">Reset all inputs to defaults</button>
+  </div>
+</section>
+
+</div>
+</main>
+
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+"use strict";
+var LOGO = { pipe: "data:image/png;base64,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", duct: "data:image/png;base64,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" };
+
+/* ======================= helpers ======================= */
+function $(id) { return document.getElementById(id); }
+function num(s) { if (s === null || s === undefined) return NaN; s = String(s).trim().replace(",", "."); if (s === "") return NaN; return Number(s); }
+function fmt(v, d) { if (!isFinite(v)) return "-"; return v.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d }); }
+function trim(v, d) { return String(Number(v.toFixed(d))); }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+function frCls(fr) { return fr > 1 + 1e-9 ? "bad" : fr > 0.85 ? "warn" : "good"; }
+
+function fd(re, rel) {
+  if (re <= 0) return 0;
+  if (re < 2300) return 64 / re;
+  var a = rel / 3.7, l = Math.log10(a + 5.74 / Math.pow(re, 0.9)), f = 0.25 / (l * l);
+  for (var i = 0; i < 30; i++) { var x = -2 * Math.log10(a + 2.51 / (re * Math.sqrt(f))); f = 1 / (x * x); }
+  return f;
+}
+// friction gradient Pa/m at velocity v (m/s), diameter d (m)
+function gradV(v, d, rho, mu, roughMm) {
+  if (v <= 0 || d <= 0) return 0;
+  return fd(rho * v * d / mu, roughMm / 1000 / d) / d * rho * v * v / 2;
+}
+function velAtGrad(g, d, rho, mu, rough) {
+  var lo = 0, hi = 80;
+  if (gradV(hi, d, rho, mu, rough) < g) return hi;
+  for (var i = 0; i < 70; i++) { var m = (lo + hi) / 2; if (gradV(m, d, rho, mu, rough) < g) lo = m; else hi = m; }
+  return lo;
+}
+
+/* ======================= constants ======================= */
+var TRKW = 3.516853, LPS_GPM = 15.850323, FPS = 0.3048, FT100 = 98.0665;
+var CFM = 0.000471947443, FPM = 0.00508, INWC = 8.17222;
+var P_FTOPA = [98.0665, 1, 9.80665, 98.0665], P_FU = ["ft wc/100 ft", "Pa/m", "mm wc/m", "m wc/100 m"];
+var D_FTOPA = [INWC, 1, 9.80665], D_FU = ["in wc/100 ft", "Pa/m", "mm wc/m"];
+var D_VTOMS = [FPM, 1], D_VU = ["fpm", "m/s"];
+var P_PRESETS = [["Standard", 4, 2.4], ["Quiet areas", 2.5, 1.5], ["Economical", 5, 3.0], ["uPVC pipe", 4, 1.5]];   // ft/100ft, m/s
+var D_PRESETS = [["Supply main", 0.08, 1500], ["Quiet / branch", 0.06, 1000], ["Return air", 0.08, 1200], ["Exhaust", 0.15, 2500]]; // in/100ft, fpm
+
+/* ======================= pipe catalogue ======================= */
+var INCH = { 15: "½", 20: "¾", 25: "1", 32: "1¼", 40: "1½", 50: "2", 65: "2½", 80: "3", 100: "4", 125: "5", 150: "6", 200: "8", 250: "10", 300: "12", 350: "14", 400: "16", 450: "18", 500: "20", 600: "24" };
+function mkPipe(dn, od, t, std) { var idmm = od - 2 * t, d = idmm / 1000; return { dn: dn, od: od, t: t, std: std, idmm: idmm, idm: d, area: Math.PI * d * d / 4, label: INCH[dn] + "″" }; }
+var MATS = (function () {
+  var dnS = [15, 20, 25, 32, 40, 50, 65, 80, 100, 125, 150], odS = [21.3, 26.9, 33.7, 42.4, 48.3, 60.3, 76.1, 88.9, 114.3, 139.7, 165.1];
+  var heavy = [3.2, 3.2, 4.0, 4.0, 4.0, 4.5, 4.5, 4.8, 5.4, 5.4, 5.4], medium = [2.6, 2.6, 3.2, 3.2, 3.2, 3.6, 3.6, 4.0, 4.5, 4.8, 4.8];
+  var dnL = [200, 250, 300, 350, 400, 450, 500, 600], odL = [219.1, 273.0, 323.9, 355.6, 406.4, 457.0, 508.0, 610.0], tL = [6.3, 6.3, 7.1, 7.1, 8.0, 8.0, 8.8, 10.0];
+  var dnP = [15, 20, 25, 32, 40, 50, 65, 80, 100, 125, 150, 200, 250, 300];
+  var odP = [0.840, 1.050, 1.315, 1.660, 1.900, 2.375, 2.875, 3.500, 4.500, 5.563, 6.625, 8.625, 10.750, 12.750];
+  var tP = [0.109, 0.113, 0.133, 0.140, 0.145, 0.154, 0.203, 0.216, 0.237, 0.258, 0.280, 0.322, 0.365, 0.406];
+  var ms = { name: "MS black steel, Class C", short: "MS Class C", rough: 0.046, pipes: [],
+    desc: "Black steel heavy-wall pipe, the usual choice for chilled and condenser water. DN 15–150 to IS 1239 Heavy, DN 200–600 to IS 3589." };
+  var gb = { name: "GI, Class B (Medium)", short: "GI Class B", rough: 0.15, pipes: [], desc: "Galvanized medium-wall pipe, DN 15–150. Rougher bore than MS, so it carries a little less at the same friction." };
+  var gc = { name: "GI, Class C (Heavy)", short: "GI Class C", rough: 0.15, pipes: [], desc: "Galvanized heavy-wall pipe, DN 15–150. Same outside size as Class B with a thicker wall and smaller bore." };
+  var pv = { name: "uPVC, Schedule 40", short: "uPVC", rough: 0.0015, pipes: [], desc: "Smooth plastic pipe, ½″ to 12″. Check its pressure and temperature rating and keep velocity low." };
+  for (var i = 0; i < dnS.length; i++) {
+    ms.pipes.push(mkPipe(dnS[i], odS[i], heavy[i], "IS 1239 Heavy"));
+    gb.pipes.push(mkPipe(dnS[i], odS[i], medium[i], "IS 1239 Medium"));
+    gc.pipes.push(mkPipe(dnS[i], odS[i], heavy[i], "IS 1239 Heavy"));
+  }
+  for (i = 0; i < dnL.length; i++) ms.pipes.push(mkPipe(dnL[i], odL[i], tL[i], "IS 3589"));
+  for (i = 0; i < dnP.length; i++) pv.pipes.push(mkPipe(dnP[i], Math.round(odP[i] * 254) / 10, Math.round(tP[i] * 2540) / 100, "uPVC Sch 40"));
+  return [ms, gb, gc, pv];
+})();
+function wRho(t) { return 1000 * (1 - (t + 288.9414) / (508929.2 * (t + 68.12963)) * (t - 3.9863) * (t - 3.9863)); }
+function wMu(t) { return 2.414e-5 * Math.pow(10, 247.8 / (t + 133.15)); }
+function wCp(t) { return 4.2174 - 3.720283e-3 * t + 1.412855e-4 * t * t - 2.654387e-6 * t * t * t + 2.093236e-8 * t * t * t * t; }
+
+/* ======================= duct catalogue ======================= */
+var DMATS = [
+  { name: "GI sheet (galvanized steel)", short: "GI sheet", rough: 0.09, gi: true, desc: "Standard sheet-metal duct. The GI sheet gauge for each rectangular size is shown as per IS 655 / CPWD practice." },
+  { name: "Aluminium sheet", short: "Aluminium", rough: 0.05, desc: "Smooth aluminium sheet duct, slightly lower friction than GI." },
+  { name: "Pre-insulated aluminium panel", short: "PIR / phenolic panel", rough: 0.05, desc: "Factory pre-insulated panel duct with aluminium foil facing. Sizes are inside dimensions." },
+  { name: "Fibrous glass duct board", short: "Duct board", rough: 0.9, desc: "Rough inner surface, noticeably higher friction than sheet metal." },
+  { name: "Flexible duct (fully stretched)", short: "Flexible", rough: 3.0, desc: "Use only for short runs to diffusers. Friction rises sharply if it is not fully stretched." },
+  { name: "PVC / plastic duct", short: "PVC", rough: 0.01, desc: "Very smooth bore, used for fume and corrosive exhaust." }
+];
+var ROUND_MM = [100, 125, 150, 175, 200, 225, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600];
+var ROUND_IN = [4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 42, 48, 54, 60];
+var CHART_MM = [100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000];
+var CHART_IN = [4, 6, 8, 10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64, 72, 80];
+function De(a, b) { return 1.30 * Math.pow(a * b, 0.625) / Math.pow(a + b, 0.25); }
+function AR(w, h) { return Math.max(w, h) / Math.min(w, h); }
+function gauge(side) { return side <= 750 ? "24 G (0.63 mm)" : side <= 1500 ? "22 G (0.80 mm)" : side <= 2250 ? "20 G (1.00 mm)" : "18 G (1.25 mm)"; }
+
+/* ======================= state ======================= */
+var DEF = {
+  G: { mod: "pipe", pu: "SI", du: "IP" },
+  P: { view: "size", sys: "chw", mat: 0, rough: "0.046", tu: "C", ts: "7", tr: "12", hrf: "1.25", useF: true, f: "4", fu: 0, useV: true, v: "2.4", vu: 0, preset: 0, load: "100", lu: 0 },
+  D: { view: "size", mat: 0, rough: "0.09", t: "20", tu: "C", alt: "0", au: "m", cpt: "400", useF: true, f: "0.08", fu: 0, useV: true, v: "1500", vu: 0, preset: 0,
+       dim: "mm", step: "50", ar: "4", useH: false, h: "300", q: "2000", qu: 0, chu: 0, cvw: "600", cvh: "300", cvq: "2000", cvqu: 0, cvd: "450", cvh2: "300" }
+};
+var KEY = "hvacsizer.akshay.v1";
+var S = JSON.parse(JSON.stringify(DEF));
+try {
+  var saved = JSON.parse(localStorage.getItem(KEY) || "null");
+  if (saved) ["G", "P", "D"].forEach(function (g) { for (var k in saved[g] || {}) if (k in S[g]) S[g][k] = saved[g][k]; });
+} catch (e) { }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
+function getV(key) { var p = key.split("."); return S[p[0]][p[1]]; }
+function setRaw(key, v) { var p = key.split("."); S[p[0]][p[1]] = v; }
+
+/* conversions that run when a unit or choice changes (old value, new value) */
+function convField(g, k, f, d) { var v = num(S[g][k]); if (isFinite(v)) S[g][k] = trim(f(v), d); }
+var HOOK = {
+  "P.tu": function (o, n) { if (o === n) return; var f = n === "F" ? function (v) { return v * 1.8 + 32; } : function (v) { return (v - 32) / 1.8; }; convField("P", "ts", f, 2); convField("P", "tr", f, 2); },
+  "P.fu": function (o, n) { convField("P", "f", function (v) { return v * P_FTOPA[o] / P_FTOPA[n]; }, 3); },
+  "P.vu": function (o, n) { if (o == n) return; convField("P", "v", function (v) { return n == 1 ? v / FPS : v * FPS; }, 2); },
+  "P.sys": function (o, n) {
+    if (o === n) return;
+    var ts = n === "chw" ? 7 : 32, tr = n === "chw" ? 12 : 37;
+    if (S.P.tu === "F") { ts = ts * 1.8 + 32; tr = tr * 1.8 + 32; }
+    S.P.ts = trim(ts, 2); S.P.tr = trim(tr, 2);
+  },
+  "P.mat": function (o, n) { S.P.rough = String(MATS[n].rough); },
+  "P.f": function () { S.P.preset = -1; }, "P.v": function () { S.P.preset = -1; },
+  "P.useF": function () { S.P.preset = -1; }, "P.useV": function () { S.P.preset = -1; },
+  "D.tu": function (o, n) { if (o === n) return; convField("D", "t", n === "F" ? function (v) { return v * 1.8 + 32; } : function (v) { return (v - 32) / 1.8; }, 1); },
+  "D.au": function (o, n) { if (o === n) return; convField("D", "alt", function (v) { return n === "ft" ? v / 0.3048 : v * 0.3048; }, 0); },
+  "D.fu": function (o, n) { convField("D", "f", function (v) { return v * D_FTOPA[o] / D_FTOPA[n]; }, 3); },
+  "D.vu": function (o, n) { if (o == n) return; convField("D", "v", function (v) { return v * D_VTOMS[o] / D_VTOMS[n]; }, n == 0 ? 0 : 2); },
+  "D.mat": function (o, n) { S.D.rough = String(DMATS[n].rough); },
+  "D.dim": function (o, n) {
+    if (o === n) return;
+    S.D.step = n === "mm" ? "50" : "2";
+    ["h", "cvw", "cvh", "cvd", "cvh2"].forEach(function (k) {
+      convField("D", k, function (v) { return n === "mm" ? Math.round(v * 25.4 / 50) * 50 : Math.round(v / 25.4); }, 0);
+    });
+  },
+  "D.f": function () { S.D.preset = -1; }, "D.v": function () { S.D.preset = -1; },
+  "D.useF": function () { S.D.preset = -1; }, "D.useV": function () { S.D.preset = -1; }
+};
+function setVal(key, v) {
+  var old = getV(key);
+  if (HOOK[key]) HOOK[key](old, v);
+  setRaw(key, v);
+  save();
+  sync();
+  render();
+}
+
+/* ======================= UI wiring ======================= */
+function buildSegs() {
+  document.querySelectorAll(".seg[data-key]").forEach(function (el) {
+    var key = el.getAttribute("data-key");
+    el.setAttribute("role", "group");
+    el.innerHTML = "";
+    el.getAttribute("data-opts").split("|").forEach(function (o) {
+      var i = o.indexOf(":"), val = o.slice(0, i), lab = o.slice(i + 1);
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = lab; b.setAttribute("data-v", val);
+      b.addEventListener("click", function () {
+        var cur = getV(key);
+        var nv = typeof cur === "number" ? Number(val) : val;
+        if (nv !== cur) setVal(key, nv);
+      });
+      el.appendChild(b);
+    });
+  });
+}
+function bindInputs() {
+  document.querySelectorAll("input[data-key], select[data-key]").forEach(function (el) {
+    var key = el.getAttribute("data-key");
+    if (el.type === "checkbox") el.addEventListener("change", function () { setVal(key, el.checked); });
+    else if (el.tagName === "SELECT") el.addEventListener("change", function () { setVal(key, el.hasAttribute("data-num") ? Number(el.value) : el.value); });
+    else el.addEventListener("input", function () { setVal(key, el.value); });
+  });
+}
+function sync() {
+  document.querySelectorAll("input[data-key], select[data-key]").forEach(function (el) {
+    var v = getV(el.getAttribute("data-key"));
+    if (el.type === "checkbox") el.checked = !!v;
+    else if (el !== document.activeElement && el.value !== String(v)) el.value = v;
+  });
+  document.querySelectorAll(".seg[data-key]").forEach(function (el) {
+    var v = String(getV(el.getAttribute("data-key")));
+    el.querySelectorAll("button").forEach(function (b) { var on = b.getAttribute("data-v") === v; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
+  });
+  ["p-f", "p-v", "d-f", "d-v"].forEach(function (id) { $(id).disabled = !S[id[0].toUpperCase()][id.slice(2) === "f" ? "useF" : "useV"]; });
+  $("d-h").disabled = !S.D.useH;
+  // modules & views
+  var mod = S.G.mod;
+  document.body.setAttribute("data-mod", mod);
+  $("m-pipe").hidden = mod !== "pipe"; $("m-duct").hidden = mod !== "duct"; $("m-help").hidden = mod !== "help";
+  document.querySelectorAll("nav.tabs button").forEach(function (b) { var on = b.getAttribute("data-mod") === mod; b.classList.toggle("on", on); b.setAttribute("aria-current", on ? "page" : "false"); });
+  $("logo").src = mod === "duct" ? LOGO.duct : LOGO.pipe;
+  $("brand-t").textContent = mod === "duct" ? "Duct Sizer" : mod === "pipe" ? "Pipe Sizer" : "Help";
+  $("units").style.visibility = mod === "help" ? "hidden" : "visible";
+  var u = mod === "duct" ? S.G.du : S.G.pu;
+  document.querySelectorAll("#units button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-u") === u); });
+  $("pv-size").hidden = S.P.view !== "size"; $("pv-cap").hidden = S.P.view !== "cap";
+  ["size", "round", "chart", "conv"].forEach(function (v) { $("dv-" + v).hidden = S.D.view !== v; });
+  document.querySelectorAll(".du").forEach(function (e) { e.textContent = S.D.dim === "mm" ? "mm" : "in"; });
+  $("p-hrfrow").hidden = S.P.sys !== "cdw"; $("p-hrfnote").hidden = S.P.sys !== "cdw";
+  renderPresets();
+}
+function renderPresets() {
+  $("p-presets").innerHTML = P_PRESETS.map(function (p, i) {
+    return '<button type="button" class="chip' + (S.P.preset === i ? " on" : "") + '" data-pp="' + i + '"><b>' + p[0] + "</b><small>" + p[1] + " ft · " + p[2] + " m/s</small></button>";
+  }).join("");
+  $("d-presets").innerHTML = D_PRESETS.map(function (p, i) {
+    return '<button type="button" class="chip' + (S.D.preset === i ? " on" : "") + '" data-dp="' + i + '"><b>' + p[0] + "</b><small>" + p[1] + " in · " + p[2] + " fpm</small></button>";
+  }).join("");
+}
+document.addEventListener("click", function (e) {
+  var b = e.target.closest("[data-pp]");
+  if (b) {
+    var i = Number(b.getAttribute("data-pp")), p = P_PRESETS[i];
+    S.P.useF = true; S.P.useV = true; S.P.preset = i;
+    S.P.f = trim(p[1] * 98.0665 / P_FTOPA[S.P.fu], 3);
+    S.P.v = trim(S.P.vu == 0 ? p[2] : p[2] / FPS, 2);
+    if (i === 3) { S.P.mat = 3; S.P.rough = String(MATS[3].rough); }
+    save(); sync(); render(); return;
+  }
+  b = e.target.closest("[data-dp]");
+  if (b) {
+    var j = Number(b.getAttribute("data-dp")), q = D_PRESETS[j];
+    S.D.useF = true; S.D.useV = true; S.D.preset = j;
+    S.D.f = trim(q[1] * INWC / D_FTOPA[S.D.fu], 3);
+    S.D.v = trim(q[2] * FPM / D_VTOMS[S.D.vu], S.D.vu == 0 ? 0 : 2);
+    save(); sync(); render(); return;
+  }
+  b = e.target.closest("nav.tabs button");
+  if (b) { S.G.mod = b.getAttribute("data-mod"); save(); sync(); render(); window.scrollTo(0, 0); return; }
+  b = e.target.closest("#units button");
+  if (b) { if (S.G.mod === "duct") S.G.du = b.getAttribute("data-u"); else S.G.pu = b.getAttribute("data-u"); save(); sync(); render(); return; }
+  b = e.target.closest("[data-copy]");
+  if (b) { copyTable($(b.getAttribute("data-copy"))); return; }
+  if (e.target.closest("#reset")) {
+    if (b = e.target.closest("#reset")) {
+      if (b.getAttribute("data-armed") !== "1") { b.setAttribute("data-armed", "1"); b.textContent = "Tap again to confirm reset"; setTimeout(function () { b.removeAttribute("data-armed"); b.textContent = "Reset all inputs to defaults"; }, 4000); return; }
+      var mod = S.G.mod; S = JSON.parse(JSON.stringify(DEF)); S.G.mod = mod; save(); sync(); render(); toast("All inputs reset");
+      b.removeAttribute("data-armed"); b.textContent = "Reset all inputs to defaults";
+    }
+  }
+});
+
+function toast(msg) { var t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(function () { t.classList.remove("show"); }, 1800); }
+function copyTable(tbl) {
+  var text = Array.prototype.map.call(tbl.rows, function (r) { return Array.prototype.map.call(r.cells, function (c) { return c.innerText.replace(/\s+/g, " ").trim(); }).join("\t"); }).join("\n");
+  function fallback() {
+    var ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select();
+    var ok = false; try { ok = document.execCommand("copy"); } catch (e) { }
+    document.body.removeChild(ta); toast(ok ? "Table copied. Paste it into Excel." : "Copy is not available here.");
+  }
+  try {
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(function () { toast("Table copied. Paste it into Excel."); }, fallback);
+    else fallback();
+  } catch (e) { fallback(); }
+}
+
+/* ======================= PIPE ======================= */
+function pipeCtx() {
+  var s = S.P, c = { mat: MATS[s.mat] || MATS[0], chw: s.sys === "chw" };
+  var r = num(s.rough), ts = num(s.ts), tr = num(s.tr), h = num(s.hrf);
+  if (!(r >= 0)) return { err: "Enter a valid pipe roughness." };
+  if (!isFinite(ts) || !isFinite(tr)) return { err: "Enter the supply and return water temperatures." };
+  if (s.tu === "F") { ts = (ts - 32) / 1.8; tr = (tr - 32) / 1.8; }
+  if (Math.abs(tr - ts) < 0.05) return { err: "Supply and return temperatures must be different." };
+  if (ts < 0 || tr < 0 || ts > 95 || tr > 95) return { err: "Water temperatures must be between 0 and 95 °C." };
+  if (!c.chw && !(h >= 1 && h <= 2)) return { err: "Heat rejection factor should be 1.0 to 2.0 (typically 1.25)." };
+  c.rough = r; c.hrf = c.chw ? 1 : h; c.dt = Math.abs(tr - ts); c.mean = (ts + tr) / 2;
+  c.rho = wRho(c.mean); c.mu = wMu(c.mean); c.cp = wCp(c.mean);
+  c.useF = s.useF; c.useV = s.useV;
+  if (!c.useF && !c.useV) return { err: "Tick at least one design limit: max friction or max velocity." };
+  if (c.useF) { var f = num(s.f); if (!(f > 0)) return { err: "Enter a valid max friction." }; c.fl = f * P_FTOPA[s.fu]; }
+  if (c.useV) { var v = num(s.v); if (!(v > 0)) return { err: "Enter a valid max velocity." }; c.vl = s.vu == 0 ? v : v * FPS; }
+  c.lpt = TRKW * c.hrf / (c.cp * c.dt) / c.rho * 1000;
+  return c;
+}
+function pipeCap(p, c) {
+  var v = Infinity, gov = "";
+  if (c.useF) { v = velAtGrad(c.fl, p.idm, c.rho, c.mu, c.rough); gov = "Friction"; }
+  if (c.useV && c.vl < v) { v = c.vl; gov = "Velocity"; }
+  var lps = v * p.area * 1000;
+  return { p: p, v: v, lps: lps, tr: lps / c.lpt, g: gradV(v, p.idm, c.rho, c.mu, c.rough), gov: gov };
+}
+function pSI() { return S.G.pu === "SI"; }
+function pVel(ms) { return pSI() ? fmt(ms, 2) + " m/s" : fmt(ms / FPS, 2) + " fps"; }
+function pFric(pa) { return pSI() ? fmt(pa, 0) + " Pa/m" : fmt(pa / FT100, 2) + " ft/100 ft"; }
+function pFlow(lps) { return pSI() ? fmt(lps, 2) + " L/s" : fmt(lps * LPS_GPM, 1) + " USgpm"; }
+function pLimits() {
+  var a = [];
+  if (S.P.useF) a.push("≤ " + S.P.f + " " + P_FU[S.P.fu]);
+  if (S.P.useV) a.push("≤ " + S.P.v + " " + (S.P.vu == 0 ? "m/s" : "fps"));
+  return a.join(" · ");
+}
+function gaugeHTML(label, val, fr, lim) {
+  if (fr < 0) return '<div class="gauge"><div class="g-top"><span class="g-lab">' + label + '</span><span class="g-val">' + val + '</span></div><div class="g-bar"><i style="width:0"></i></div><div class="g-sub">No limit set</div></div>';
+  var cls = frCls(fr);
+  return '<div class="gauge ' + cls + '"><div class="g-top"><span class="g-lab">' + label + '</span><span class="g-val">' + val + '</span></div><div class="g-bar"><i style="width:' + (Math.min(fr, 1) * 100).toFixed(1) + '%"></i></div><div class="g-sub">' + fmt(fr * 100, 0) + " % of " + lim + "</div></div>";
+}
+function renderPipe() {
+  var s = S.P, c = pipeCtx(), tu = s.tu === "C" ? "°C" : "°F";
+  var m = MATS[s.mat] || MATS[0];
+  $("p-matnote").textContent = m.desc;
+  $("p-sum").textContent = (s.sys === "chw" ? "Chilled water" : "Condenser water") + " · " + m.short + " · " + s.ts + " → " + s.tr + " " + tu + " · " + pLimits();
+  if (c.err) {
+    $("p-dt").textContent = c.err; $("p-dt").className = "readout err";
+    var eb = '<div class="err-box" style="margin:14px">' + esc(c.err) + " Open Design basis to fix it.</div>";
+    $("p-answer").innerHTML = eb; $("p-list").innerHTML = ""; $("p-table").innerHTML = ""; $("p-equiv").textContent = ""; $("p-props").textContent = "";
+    $("p-capnote").textContent = c.err;
+    return;
+  }
+  var dtShow = s.tu === "C" ? c.dt : c.dt * 1.8;
+  $("p-dt").className = "readout";
+  $("p-dt").textContent = "ΔT " + fmt(dtShow, 1) + " " + tu + "  →  " + fmt(c.lpt, 3) + " L/s per TR  (" + fmt(c.lpt * LPS_GPM, 2) + " USgpm/TR)";
+  $("p-props").textContent = "Water at " + fmt(s.tu === "C" ? c.mean : c.mean * 1.8 + 32, 1) + " " + tu + " mean: density " + fmt(c.rho, 1) + " kg/m³, viscosity " + fmt(c.mu / c.rho * 1e6, 3) + " cSt, specific heat " + fmt(c.cp, 3) + " kJ/kg·K.";
+  var caps = m.pipes.map(function (p) { return pipeCap(p, c); });
+
+  if (s.view === "cap") {
+    var si = pSI();
+    var h = "<thead><tr><th>Size</th><th>DN</th><th>Bore mm</th><th>Max TR</th>" + (si ? "<th>Max L/s</th><th>Max m³/h</th><th>Velocity m/s</th><th>Friction Pa/m</th>" : "<th>Max USgpm</th><th>Velocity fps</th><th>Friction ft/100 ft</th>") + "<th>Limited by</th></tr></thead><tbody>";
+    caps.forEach(function (k) {
+      h += "<tr><td>" + k.p.label + "</td><td>" + k.p.dn + "</td><td>" + fmt(k.p.idmm, 1) + '</td><td class="hi">' + fmt(k.tr, k.tr < 10 ? 2 : 1) + "</td>" +
+        (si ? "<td>" + fmt(k.lps, 2) + "</td><td>" + fmt(k.lps * 3.6, 1) + "</td><td>" + fmt(k.v, 2) + "</td><td>" + fmt(k.g, 0) + "</td>"
+            : "<td>" + fmt(k.lps * LPS_GPM, 1) + "</td><td>" + fmt(k.v / FPS, 2) + "</td><td>" + fmt(k.g / FT100, 2) + "</td>") +
+        '<td><span class="pill ' + (k.gov === "Friction" ? "f" : "v") + '">' + k.gov + "</span></td></tr>";
+    });
+    $("p-table").innerHTML = h + "</tbody>";
+    $("p-capnote").textContent = m.name + ", " + (s.sys === "chw" ? "chilled water" : "condenser water") + ", ΔT " + fmt(dtShow, 1) + " " + tu + ", " + pLimits() + ".";
+    return;
+  }
+
+  // size a pipe
+  var val = num(s.load);
+  if (!(val > 0)) {
+    $("p-equiv").textContent = ""; $("p-answer").innerHTML = '<div class="ans-text" style="padding:14px">Type the cooling load or water flow above.</div>'; $("p-list").innerHTML = ""; return;
+  }
+  var lps = [val * c.lpt, val / TRKW * c.lpt, val / LPS_GPM, val, val / 3.6][s.lu];
+  var tr = lps / c.lpt;
+  $("p-equiv").textContent = "= " + fmt(tr, 1) + " TR · " + fmt(tr * TRKW, 1) + " kW · " + fmt(lps, 2) + " L/s · " + fmt(lps * 3.6, 1) + " m³/h · " + fmt(lps * LPS_GPM, 1) + " USgpm";
+  var sel = -1;
+  for (var i = 0; i < caps.length; i++) if (lps <= caps[i].lps + 1e-9) { sel = i; break; }
+  var html;
+  if (sel < 0) {
+    var big = caps[caps.length - 1], n = Math.ceil(lps / big.lps);
+    html = '<div class="ans-head bad"><div><div class="ans-k">No single pipe</div><div class="ans-size">Too large</div></div></div><div class="ruler"></div>' +
+      '<p class="ans-text">The largest ' + m.short + " pipe (" + big.p.label + ") carries " + fmt(big.tr, 0) + " TR within your limits. Use " + n + " × " + big.p.label + " in parallel, relax the limits, or choose another material.</p>";
+  } else {
+    var k = caps[sel], p = k.p, v = lps / 1000 / p.area, g = gradV(v, p.idm, c.rho, c.mu, c.rough), used = lps / k.lps;
+    var fv = c.useV ? v / c.vl : -1, ff = c.useF ? g / c.fl : -1;
+    html = '<div class="ans-head ok"><div><div class="ans-k">Use</div><div class="ans-size">' + p.label + '</div></div><div class="ans-sub">DN ' + p.dn + " · bore " + fmt(p.idmm, 1) + " mm<br>" + m.short + "</div></div>" +
+      '<div class="ruler"></div><p class="ans-text">Carries ' + fmt(tr, 1) + " TR (" + pFlow(lps) + ") at " + pVel(v) + " and " + pFric(g) + ".";
+    if (sel > 0) html += " " + caps[sel - 1].p.label + " is too small: max " + fmt(caps[sel - 1].tr, 1) + " TR.";
+    html += "</p><div class=\"gauges\">" +
+      gaugeHTML("Velocity", pVel(v), fv, c.useV ? pVel(c.vl) : "") +
+      gaugeHTML("Friction", pFric(g), ff, c.useF ? pFric(c.fl) : "") +
+      gaugeHTML("Pipe loading", fmt(used * 100, 0) + " %", used, "max " + fmt(k.tr, 1) + " TR").replace('class="gauge ', 'class="gauge span ') + "</div>";
+  }
+  $("p-answer").innerHTML = html;
+
+  var L = '<div class="row hd"><span>Size</span><span>Max TR</span><span>' + (pSI() ? "m/s · Pa/m" : "fps · ft/100") + "</span><span>Loading</span></div>";
+  var from = sel < 0 ? Math.max(0, caps.length - 3) : Math.max(0, sel - 2);
+  caps.forEach(function (k, i) {
+    if (i < from) return;
+    var v = lps / 1000 / k.p.area, g = gradV(v, k.p.idm, c.rho, c.mu, c.rough), u = lps / k.lps;
+    var cls = i === sel ? "sel" : u > 1 + 1e-9 ? "small" : "";
+    var st = i === sel ? "Selected" : u > 1 + 1e-9 ? "Too small" : "Larger";
+    L += '<div class="row ' + cls + '"><div class="r-size"><b>' + k.p.label + "</b><small>DN " + k.p.dn + '</small></div><div><b>' + fmt(k.tr, k.tr < 10 ? 2 : 1) + "</b><small>" + k.gov.toLowerCase() + "</small></div>" +
+      "<div><b>" + (pSI() ? fmt(v, 2) : fmt(v / FPS, 2)) + "</b><small>" + (pSI() ? fmt(g, 0) + " Pa/m" : fmt(g / FT100, 2) + " ft/100 ft") + "</small></div>" +
+      '<div><div class="mini ' + frCls(u) + '"><i style="width:' + (Math.min(u, 1) * 100).toFixed(1) + '%"></i></div><small>' + fmt(u * 100, 0) + " % · " + st + "</small></div></div>";
+  });
+  $("p-list").innerHTML = L;
+}
+
+/* ======================= DUCT ======================= */
+function dMetric() { return S.D.dim === "mm"; }
+function toMm(v) { return dMetric() ? v : v * 25.4; }
+function dim(mm) {
+  if (dMetric()) return fmt(mm, 0);
+  var i = mm / 25.4; return fmt(i, Math.abs(i - Math.round(i)) < 0.05 ? 0 : 1);
+}
+function dimU() { return dMetric() ? "mm" : "in"; }
+function dSI() { return S.G.du === "SI"; }
+function dFlow(q) { return dSI() ? fmt(q * 1000, 0) + " L/s" : fmt(q / CFM, 0) + " CFM"; }
+function dVel(ms) { return dSI() ? fmt(ms, 2) + " m/s" : fmt(ms / FPM, 0) + " fpm"; }
+function dFric(pa) { return dSI() ? fmt(pa, 2) + " Pa/m" : fmt(pa / INWC, 3) + " in/100 ft"; }
+function dLimits() {
+  var a = [];
+  if (S.D.useF) a.push("≤ " + S.D.f + " " + D_FU[S.D.fu]);
+  if (S.D.useV) a.push("≤ " + S.D.v + " " + D_VU[S.D.vu]);
+  return a.join(" · ");
+}
+function ductCtx() {
+  var s = S.D, c = { mat: DMATS[s.mat] || DMATS[0] };
+  var r = num(s.rough), t = num(s.t), alt = num(s.alt), cpt = num(s.cpt), step = num(s.step), ar = num(s.ar);
+  if (!(r >= 0)) return { err: "Enter a valid duct roughness." };
+  if (!isFinite(t)) return { err: "Enter the air temperature." };
+  if (s.tu === "F") t = (t - 32) / 1.8;
+  if (t < -40 || t > 200) return { err: "Air temperature must be between -40 and 200 °C." };
+  if (!isFinite(alt)) return { err: "Enter the site altitude." };
+  if (s.au === "ft") alt *= 0.3048;
+  if (alt < -500 || alt > 5000) return { err: "Altitude must be between -500 and 5000 m." };
+  if (!(cpt > 0)) return { err: "Enter a valid CFM per TR." };
+  c.rough = r; c.t = t; c.alt = alt; c.cpt = cpt;
+  c.p = 101325 * Math.pow(1 - 2.25577e-5 * alt, 5.25588);
+  c.rho = c.p / (287.05 * (t + 273.15));
+  var T = t + 273.15; c.mu = 1.458e-6 * Math.pow(T, 1.5) / (T + 110.4);
+  c.useF = s.useF; c.useV = s.useV;
+  if (!c.useF && !c.useV) return { err: "Tick at least one design limit: max friction or max velocity." };
+  if (c.useF) { var f = num(s.f); if (!(f > 0)) return { err: "Enter a valid max friction." }; c.fl = f * D_FTOPA[s.fu]; }
+  if (c.useV) { var v = num(s.v); if (!(v > 0)) return { err: "Enter a valid max velocity." }; c.vl = v * D_VTOMS[s.vu]; }
+  if (!(step > 0)) return { err: "Enter a valid size step." };
+  c.step = toMm(step);
+  if (c.step < 5) return { err: "The size step is too small." };
+  c.min = dMetric() ? Math.max(100, Math.ceil(100 / c.step) * c.step) : Math.max(4, Math.ceil(4 / step) * step) * 25.4;
+  if (!(ar >= 1)) return { err: "Max aspect ratio must be 1 or more." };
+  c.ar = ar; c.useH = s.useH;
+  if (c.useH) { var hh = num(s.h); if (!(hh > 0)) return { err: "Enter a valid max duct height." }; c.maxH = toMm(hh); }
+  return c;
+}
+function gradQ(q, d, c) { return gradV(q / (Math.PI * d * d / 4), d, c.rho, c.mu, c.rough); }
+function roundCap(dmm, c) {
+  var d = dmm / 1000, a = Math.PI * d * d / 4, v = Infinity, gov = "";
+  if (c.useF) { v = velAtGrad(c.fl, d, c.rho, c.mu, c.rough); gov = "Friction"; }
+  if (c.useV && c.vl < v) { v = c.vl; gov = "Velocity"; }
+  return { q: v * a, v: v, g: gradV(v, d, c.rho, c.mu, c.rough), gov: gov };
+}
+function rectCap(w, h, c) {
+  var area = w * h / 1e6, de = De(w, h) / 1000, q = Infinity, gov = "";
+  if (c.useF) { q = velAtGrad(c.fl, de, c.rho, c.mu, c.rough) * Math.PI * de * de / 4; gov = "Friction"; }
+  if (c.useV && c.vl * area < q) { q = c.vl * area; gov = "Velocity"; }
+  return { q: q, v: q / area, g: gradQ(q, de, c), gov: gov };
+}
+function roundExact(q, c) {
+  var d = 0;
+  if (c.useV) d = Math.sqrt(4 * q / (Math.PI * c.vl));
+  if (c.useF) {
+    var lo = 0.005, hi = 6;
+    for (var i = 0; i < 70; i++) { var m = (lo + hi) / 2; if (gradQ(q, m, c) > c.fl) lo = m; else hi = m; }
+    d = Math.max(d, hi);
+  }
+  return d;
+}
+function rectOk(q, w, h, c) {
+  var v = q / (w * h / 1e6);
+  if (c.useV && v > c.vl * (1 + 1e-9)) return false;
+  if (c.useF && gradQ(q, De(w, h) / 1000, c) > c.fl * (1 + 1e-9)) return false;
+  return true;
+}
+function rectWidth(q, h, c) {
+  // smallest width (multiple of step) that meets the limits; binary search over steps
+  var lo = 0, hi = 800;
+  if (!rectOk(q, c.min + hi * c.step, h, c)) return -1;
+  while (lo < hi) { var m = (lo + hi) >> 1; if (rectOk(q, c.min + m * c.step, h, c)) hi = m; else lo = m + 1; }
+  return c.min + lo * c.step;
+}
+function roundStd(mm) {
+  var list = dMetric() ? ROUND_MM : ROUND_IN;
+  for (var i = 0; i < list.length; i++) { var d = dMetric() ? list[i] : list[i] * 25.4; if (d >= mm - 0.01) return d; }
+  return -1;
+}
+function parseQ(text, u, c) {
+  var v = num(text); if (!(v > 0)) return -1;
+  return [v * CFM, v / 1000, v / 3600, v, v * c.cpt * CFM][u];
+}
+function renderDuct() {
+  var s = S.D, c = ductCtx(), m = DMATS[s.mat] || DMATS[0];
+  $("d-matnote").textContent = m.desc;
+  $("d-sum").textContent = m.short + " · air " + s.t + " " + (s.tu === "C" ? "°C" : "°F") + " · " + dLimits() + " · AR ≤ " + s.ar + (s.useH ? " · H ≤ " + s.h + " " + dimU() : "");
+  if (c.err) {
+    $("d-air").textContent = c.err; $("d-air").className = "readout err";
+    var eb = '<div class="err-box" style="margin:14px">' + esc(c.err) + " Open Design basis to fix it.</div>";
+    $("d-answer").innerHTML = eb; $("d-list").innerHTML = ""; $("d-rtable").innerHTML = ""; $("d-ctable").innerHTML = ""; $("d-cv1").innerHTML = ""; $("d-cv2").innerHTML = ""; $("d-equiv").textContent = "";
+    $("d-rnote").textContent = c.err;
+    return;
+  }
+  $("d-air").className = "readout";
+  $("d-air").textContent = "Air density " + fmt(c.rho, 3) + " kg/m³ (standard air 1.204) · pressure " + fmt(c.p / 1000, 1) + " kPa";
+  if (s.view === "size") renderDuctSize(c, m);
+  else if (s.view === "round") renderRound(c, m);
+  else if (s.view === "chart") renderChart(c);
+  else renderConv(c, m);
+}
+function renderDuctSize(c, m) {
+  var s = S.D, q = parseQ(s.q, s.qu, c);
+  if (q <= 0) { $("d-equiv").textContent = ""; $("d-answer").innerHTML = '<div class="ans-text" style="padding:14px">Type the airflow above.</div>'; $("d-list").innerHTML = ""; return; }
+  var cfm = q / CFM;
+  $("d-equiv").textContent = "= " + fmt(cfm, 0) + " CFM · " + fmt(q * 1000, 0) + " L/s · " + fmt(q * 3600, 0) + " m³/h · " + fmt(cfm / c.cpt, 1) + " TR";
+  var exact = roundExact(q, c) * 1000, rd = roundStd(exact);
+  var hMax = dMetric() ? 1200 : 48 * 25.4, rows = [], best = -1, bestPer = Infinity;
+  for (var h = c.min; h <= hMax + 0.01; h += c.step) {
+    var w = rectWidth(q, h, c);
+    if (w < 0 || w < h) continue;
+    var ar = AR(w, h);
+    if (ar > Math.max(8, c.ar) + 1e-9) continue;
+    var ok = ar <= c.ar + 1e-9 && (!c.useH || h <= c.maxH + 0.01);
+    rows.push({ w: w, h: h, ok: ok, ar: ar });
+    if (ok && 2 * (w + h) < bestPer - 1e-6) { bestPer = 2 * (w + h); best = rows.length - 1; }
+  }
+  var roundTxt = rd > 0 ? "Ø " + dim(rd) : "Ø " + dim(exact) + "+";
+  var html;
+  if (best < 0) {
+    html = '<div class="ans-head bad"><div><div class="ans-k">Rectangular</div><div class="ans-size">No size fits</div></div><div class="ans-alt"><div class="ans-k">Round</div><div class="ans-size">' + roundTxt + '</div></div></div><div class="ruler"></div>' +
+      '<p class="ans-text">No rectangular size meets your limits' + (c.useH ? " within the max height" : "") + " and aspect ratio " + esc(s.ar) + " : 1. Raise the max height or aspect ratio, relax the limits, or split the airflow into two ducts.</p>";
+  } else {
+    var b = rows[best], v = q / (b.w * b.h / 1e6), g = gradQ(q, De(b.w, b.h) / 1000, c);
+    var fv = c.useV ? v / c.vl : -1, ff = c.useF ? g / c.fl : -1;
+    var vr = rd > 0 ? q / (Math.PI * rd * rd / 4e6) : 0;
+    html = '<div class="ans-head ok"><div><div class="ans-k">Rectangular</div><div class="ans-size">' + dim(b.w) + " × " + dim(b.h) + '</div><div class="ans-sub" style="padding:2px 0 0">' + dimU() + " · AR " + fmt(b.ar, 1) + " : 1" + (m.gi ? " · " + gauge(Math.max(b.w, b.h)).split(" (")[0] : "") + '</div></div>' +
+      '<div class="ans-alt"><div class="ans-k">or round</div><div class="ans-size">' + roundTxt + '</div><div class="ans-sub" style="padding:2px 0 0">' + dimU() + (rd > 0 ? " · " + dVel(vr) : "") + "</div></div></div>" +
+      '<div class="ruler"></div><p class="ans-text">' + dFlow(q) + " at " + dVel(v) + " and " + dFric(g) + ". Least sheet metal within your aspect ratio" + (c.useH ? " and height" : "") + " rules.</p>" +
+      '<div class="gauges">' + gaugeHTML("Velocity", dVel(v), fv, c.useV ? dVel(c.vl) : "") + gaugeHTML("Friction", dFric(g), ff, c.useF ? dFric(c.fl) : "") + "</div>";
+  }
+  $("d-answer").innerHTML = html;
+  var L = '<div class="row hd"><span>W × H ' + dimU() + "</span><span>Aspect</span><span>" + (dSI() ? "m/s · Pa/m" : "fpm · in/100") + "</span><span>Result</span></div>";
+  rows.forEach(function (r, i) {
+    var v = q / (r.w * r.h / 1e6), g = gradQ(q, De(r.w, r.h) / 1000, c), st, pc;
+    if (i === best) { st = "Best"; pc = "ok"; }
+    else if (c.useH && r.h > c.maxH + 0.01) { st = "Too deep"; pc = "no"; }
+    else if (r.ar > c.ar + 1e-9) { st = "AR too high"; pc = "no"; }
+    else { st = "OK"; pc = "v"; }
+    L += '<div class="row ' + (i === best ? "sel" : r.ok ? "" : "small") + '"><div class="r-size"><b>' + dim(r.w) + "×" + dim(r.h) + "</b><small>Ø " + dim(De(r.w, r.h)) + " eq.</small></div>" +
+      "<div><b>" + fmt(r.ar, 1) + "</b><small>" + (m.gi ? gauge(Math.max(r.w, r.h)).split(" (")[0] : ": 1") + "</small></div>" +
+      "<div><b>" + (dSI() ? fmt(v, 2) : fmt(v / FPM, 0)) + "</b><small>" + (dSI() ? fmt(g, 2) + " Pa/m" : fmt(g / INWC, 3) + " in") + "</small></div>" +
+      '<div><span class="pill ' + pc + '">' + st + "</span><small>" + fmt(2 * (r.w + r.h) / 1000, 2) + " m² sheet/m</small></div></div>";
+  });
+  $("d-list").innerHTML = rows.length ? L : '<div class="row"><small>No rectangular sizes up to ' + dim(hMax) + " " + dimU() + " high carry this airflow.</small></div>";
+}
+function renderRound(c, m) {
+  var list = dMetric() ? ROUND_MM : ROUND_IN, si = dSI();
+  var h = "<thead><tr><th>Diameter " + dimU() + "</th>" + (si ? "<th>Max L/s</th><th>Max m³/h</th>" : "<th>Max CFM</th>") + "<th>Max TR</th>" +
+    (si ? "<th>Velocity m/s</th><th>Friction Pa/m</th>" : "<th>Velocity fpm</th><th>Friction in/100 ft</th>") + "<th>Limited by</th></tr></thead><tbody>";
+  list.forEach(function (d0) {
+    var d = dMetric() ? d0 : d0 * 25.4, k = roundCap(d, c), cfm = k.q / CFM;
+    h += "<tr><td>Ø " + dim(d) + "</td>" + (si ? '<td class="hi">' + fmt(k.q * 1000, 0) + "</td><td>" + fmt(k.q * 3600, 0) + "</td>" : '<td class="hi">' + fmt(cfm, 0) + "</td>") +
+      "<td>" + fmt(cfm / c.cpt, 1) + "</td>" + (si ? "<td>" + fmt(k.v, 2) + "</td><td>" + fmt(k.g, 2) + "</td>" : "<td>" + fmt(k.v / FPM, 0) + "</td><td>" + fmt(k.g / INWC, 3) + "</td>") +
+      '<td><span class="pill ' + (k.gov === "Friction" ? "f" : "v") + '">' + k.gov + "</span></td></tr>";
+  });
+  $("d-rtable").innerHTML = h + "</tbody>";
+  $("d-rnote").textContent = m.short + ", air " + fmt(c.rho, 3) + " kg/m³, " + dLimits() + ". TR at " + S.D.cpt + " CFM/TR.";
+}
+function renderChart(c) {
+  var list = dMetric() ? CHART_MM : CHART_IN, u = S.D.chu;
+  var h = "<thead><tr><th>H \\ W</th>" + list.map(function (w) { return "<th>" + w + "</th>"; }).join("") + "</tr></thead><tbody>";
+  list.forEach(function (h0) {
+    var hh = dMetric() ? h0 : h0 * 25.4;
+    h += "<tr><td>" + h0 + "</td>";
+    list.forEach(function (w0) {
+      var w = dMetric() ? w0 : w0 * 25.4;
+      if (w < hh - 0.01) { h += '<td class="na"></td>'; return; }
+      var k = rectCap(w, hh, c), cfm = k.q / CFM, val = [cfm, k.q * 1000, k.q * 3600, cfm / c.cpt][u];
+      var cls = AR(w, hh) > c.ar + 1e-9 ? "over" : k.gov === "Velocity" ? "v" : "";
+      h += '<td class="' + cls + '" title="' + dim(w) + "×" + dim(hh) + " " + dimU() + ": " + dVel(k.v) + ", " + dFric(k.g) + '">' + fmt(val, u === 3 ? 1 : 0) + "</td>";
+    });
+    h += "</tr>";
+  });
+  $("d-ctable").innerHTML = h + "</tbody>";
+}
+function kv(rows) { return rows.map(function (r) { return "<div><dt>" + r[0] + '</dt><dd class="' + (r[2] || "") + '">' + r[1] + "</dd></div>"; }).join(""); }
+function renderConv(c, m) {
+  var s = S.D, w = num(s.cvw), h = num(s.cvh), out = [];
+  if (w > 0 && h > 0) {
+    w = toMm(w); h = toMm(h);
+    var de = De(w, h), dh = 2 * w * h / (w + h), area = w * h / 1e6, rs = roundStd(de);
+    out.push(["Equivalent round (same friction)", "Ø " + (dMetric() ? fmt(de, 0) : fmt(de / 25.4, 1)) + " " + dimU(), "good"]);
+    out.push(["Nearest standard round", rs > 0 ? "Ø " + dim(rs) + " " + dimU() : "-"]);
+    out.push(["Aspect ratio", fmt(AR(w, h), 2) + " : 1", AR(w, h) > c.ar + 1e-9 ? "bad" : ""]);
+    out.push(["Hydraulic diameter", (dMetric() ? fmt(dh, 0) : fmt(dh / 25.4, 1)) + " " + dimU()]);
+    out.push(["Area", fmt(area, 3) + " m² (" + fmt(area / 0.09290304, 2) + " ft²)"]);
+    out.push(["Sheet per metre run", fmt(2 * (w + h) / 1000, 2) + " m²/m"]);
+    if (m.gi) out.push(["GI sheet gauge", gauge(Math.max(w, h))]);
+    var q = parseQ(s.cvq, s.cvqu, c);
+    if (q > 0) {
+      var v = q / area, g = gradQ(q, de / 1000, c), k = rectCap(w, h, c);
+      out.push(["Velocity", dVel(v), c.useV ? frCls(v / c.vl) : ""]);
+      out.push(["Friction", dFric(g), c.useF ? frCls(g / c.fl) : ""]);
+      out.push(["Loading vs. your limits", fmt(q / k.q * 100, 0) + " % (max " + dFlow(k.q) + ")", frCls(q / k.q)]);
+    }
+  } else out.push(["Enter width and height", ""]);
+  $("d-cv1").innerHTML = kv(out);
+  var d = num(s.cvd), h2 = num(s.cvh2), o2 = [];
+  if (d > 0 && h2 > 0) {
+    d = toMm(d); h2 = toMm(h2);
+    var lo = 1, hi = 20000;
+    if (De(hi, h2) < d) o2.push(["Width", "Too wide. Choose a larger height.", "bad"]);
+    else {
+      for (var i = 0; i < 90; i++) { var mid = (lo + hi) / 2; if (De(mid, h2) < d) lo = mid; else hi = mid; }
+      var wr = Math.ceil(hi / c.step - 1e-9) * c.step, ar = AR(wr, h2);
+      o2.push(["Rectangular size", dim(wr) + " × " + dim(h2) + " " + dimU(), "good"]);
+      o2.push(["Exact width", (dMetric() ? fmt(hi, 0) : fmt(hi / 25.4, 1)) + " " + dimU()]);
+      o2.push(["Aspect ratio", fmt(ar, 2) + " : 1" + (ar > c.ar + 1e-9 ? " (above max " + esc(s.ar) + ")" : ""), ar > c.ar + 1e-9 ? "bad" : ""]);
+      o2.push(["Sheet per metre run", fmt(2 * (wr + h2) / 1000, 2) + " m²/m (round " + fmt(Math.PI * d / 1000, 2) + ")"]);
+      if (m.gi) o2.push(["GI sheet gauge", gauge(Math.max(wr, h2))]);
+    }
+  } else o2.push(["Enter diameter and height", ""]);
+  $("d-cv2").innerHTML = kv(o2);
+}
+
+/* ======================= init ======================= */
+function fillSelect(id, arr) { $(id).innerHTML = arr.map(function (m, i) { return '<option value="' + i + '">' + esc(m.name) + "</option>"; }).join(""); }
+function render() { if (S.G.mod === "pipe") renderPipe(); else if (S.G.mod === "duct") renderDuct(); }
+fillSelect("p-mat", MATS); fillSelect("d-mat", DMATS);
+var wide = window.matchMedia ? window.matchMedia("(min-width: 900px)") : null;
+function openBasis() { if (wide && wide.matches) { $("p-basis").open = true; $("d-basis").open = true; } }
+openBasis(); if (wide && wide.addEventListener) wide.addEventListener("change", openBasis);
+buildSegs(); bindInputs(); sync(); render();
+})();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); }); }
+</script>
+</body></html>
