@@ -228,7 +228,7 @@ dl.kv dd.good { color: var(--good); } dl.kv dd.bad { color: var(--bad); } dl.kv 
 nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 9; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
 nav.tabs .tin { display: flex; max-width: 760px; margin: 0 auto; }
 nav.tabs { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); color: var(--ink); }
-nav.tabs button { flex: 1; border: 0; background: none; padding: 8px 4px 9px; display: grid; justify-items: center; gap: 2px; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; position: relative; }
+nav.tabs button, nav.tabs a { flex: 1; text-decoration: none; border: 0; background: none; padding: 8px 4px 9px; display: grid; justify-items: center; gap: 2px; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; position: relative; }
 nav.tabs svg { width: 25px; height: 25px; }
 nav.tabs button.on { color: var(--acc); }
 nav.tabs button.on::before { content: ""; position: absolute; top: 0; left: 30%; right: 30%; height: 3px; border-radius: 0 0 3px 3px; background: var(--acc); }
@@ -246,8 +246,8 @@ nav.tabs button.on::before { content: ""; position: absolute; top: 0; left: 30%;
   .bar .inner { gap: 18px; padding-block: 8px; }
   nav.tabs { position: static; background: transparent; border: 0; padding: 0; margin-left: 12px; color: var(--on-acc); flex: none; }
   nav.tabs .tin { gap: 4px; max-width: none; }
-  nav.tabs button { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 9px; font-size: 14.5px; color: inherit; opacity: .78; }
-  nav.tabs button:hover { opacity: 1; background: rgba(255,255,255,.12); }
+  nav.tabs button, nav.tabs a { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 9px; font-size: 14.5px; color: inherit; opacity: .78; }
+  nav.tabs button:hover, nav.tabs a:hover { opacity: 1; background: rgba(255,255,255,.12); }
   nav.tabs button.on { color: inherit; opacity: 1; background: rgba(255,255,255,.2); }
   nav.tabs button.on::before { display: none; }
   nav.tabs svg { width: 20px; height: 20px; }
@@ -281,6 +281,7 @@ nav.tabs button.on::before { content: ""; position: absolute; top: 0; left: 30%;
     <button data-mod="pipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v8a6 6 0 0 0 6 6h7"/><path d="M4 3h4M19 15v4"/><path d="M21 20.5a1.5 1.5 0 0 1-3 0c0-1 1.5-2.5 1.5-2.5S21 19.5 21 20.5z" fill="currentColor" stroke="none"/></svg>Pipe</button>
     <button data-mod="duct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M3 9h11v9H3z"/><path d="M3 9l5-4h11l-5 4M14 18l5-4V5"/></svg>Duct</button>
     <button data-mod="help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>Help</button>
+    <a href="psychrometric/" title="Psychrometric Calculator"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M21 20V4"/><path d="M4 19c5-1 9-5 11-14"/><path d="M4 19.5c6-1 11-4 15-10"/><circle cx="13" cy="15" r="1.6" fill="currentColor" stroke="none"/></svg>Psychro</a>
   </div>
 </nav>
     <div class="useg" id="units" role="group" aria-label="Result units">

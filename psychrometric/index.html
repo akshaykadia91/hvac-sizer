@@ -50,6 +50,9 @@ button.pri{background:var(--accent);border-color:var(--accent);color:var(--panel
 button.ghost{background:transparent}
 button.danger{color:var(--warn)}
 button:hover{border-color:var(--accent)}
+.btnlink{display:inline-flex;align-items:center;border-radius:6px;border:1px solid var(--line);background:var(--panel);padding:6px 12px;font-weight:500;font-size:14px;color:var(--ink);text-decoration:none}
+.btnlink:hover{border-color:var(--accent)}
+.btnlink:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--panel)}
 .seg button{border:0;border-radius:0;padding:6px 11px;font-size:13px;background:transparent}
 .seg button+button{border-left:1px solid var(--line)}
@@ -157,6 +160,7 @@ tbody tr:last-child td{border-bottom:0}
       <label class="f">Capacity<select id="cu"><option value="kw">kW</option><option value="tr">TR</option><option value="btu">Btu/h</option><option value="kcal">kcal/h</option></select></label>
       <label class="f"><span>Altitude (<span id="altu">m</span>)</span><input id="alt" type="number" step="10"></label>
       <div class="f">Pressure<span class="press" id="pr"></span></div>
+      <a class="btnlink" id="sizer-link" href="../">HVAC Sizer</a>
       <button id="btn-ex">Examples</button>
       <button id="btn-man">Manual</button>
       <button id="btn-rep">Report</button>
