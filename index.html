@@ -36,6 +36,7 @@
   --on-acc: #FFFFFF;
   --f-ui: "Barlow", Roboto, "Segoe UI", system-ui, sans-serif;
   --f-num: "Barlow Semi Condensed", "Roboto Condensed", "Arial Narrow", Roboto, sans-serif;
+  --psy: #0A6A94;
   --acc: var(--pipe);
   --acc-tint: #E3EDF8;
 }
@@ -44,16 +45,20 @@
     --bg: #0C151E; --surface: #14212D; --sunken: #101B25; --ink: #E3ECF4; --muted: #93A5B6; --line: #253748;
     --pipe: #5D9FE3; --duct: #3FB4A6; --water: #4CC3EE;
     --good: #50C27F; --good-bg: #173426; --warn: #F0A445; --warn-bg: #3A2A12; --bad: #F2716A; --bad-bg: #3D1C1A;
-    --vel-bg: #1A2C40; --on-acc: #08121B; --acc-tint: #1A2E44; color-scheme: dark;
+    --vel-bg: #1A2C40; --on-acc: #08121B; --acc-tint: #1A2E44; --psy: #4FB4E0; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0C151E; --surface: #14212D; --sunken: #101B25; --ink: #E3ECF4; --muted: #93A5B6; --line: #253748;
   --pipe: #5D9FE3; --duct: #3FB4A6; --water: #4CC3EE;
   --good: #50C27F; --good-bg: #173426; --warn: #F0A445; --warn-bg: #3A2A12; --bad: #F2716A; --bad-bg: #3D1C1A;
-  --vel-bg: #1A2C40; --on-acc: #08121B; --acc-tint: #1A2E44; color-scheme: dark;
+  --vel-bg: #1A2C40; --on-acc: #08121B; --acc-tint: #1A2E44; --psy: #4FB4E0; color-scheme: dark;
 }
 body[data-mod="duct"] { --acc: var(--duct); --acc-tint: color-mix(in srgb, var(--duct) 14%, var(--surface)); }
+body[data-mod="psy"] { --acc: var(--psy); --acc-tint: color-mix(in srgb, var(--psy) 13%, var(--surface)); }
+body[data-mod="psy"] main { padding: 0; }
+body[data-mod="psy"] main .inner { max-width: none; }
+#m-psy iframe { display: block; width: 100%; height: 70vh; border: 0; background: var(--bg); }
 body[data-mod="pipe"], body[data-mod="help"] { --acc-tint: color-mix(in srgb, var(--pipe) 13%, var(--surface)); }
 
 * { box-sizing: border-box; }
@@ -228,7 +233,7 @@ dl.kv dd.good { color: var(--good); } dl.kv dd.bad { color: var(--bad); } dl.kv 
 nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 9; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
 nav.tabs .tin { display: flex; max-width: 760px; margin: 0 auto; }
 nav.tabs { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); color: var(--ink); }
-nav.tabs button, nav.tabs a { flex: 1; text-decoration: none; border: 0; background: none; padding: 8px 4px 9px; display: grid; justify-items: center; gap: 2px; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; position: relative; }
+nav.tabs button { flex: 1; border: 0; background: none; padding: 8px 4px 9px; display: grid; justify-items: center; gap: 2px; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; position: relative; }
 nav.tabs svg { width: 25px; height: 25px; }
 nav.tabs button.on { color: var(--acc); }
 nav.tabs button.on::before { content: ""; position: absolute; top: 0; left: 30%; right: 30%; height: 3px; border-radius: 0 0 3px 3px; background: var(--acc); }
@@ -246,8 +251,8 @@ nav.tabs button.on::before { content: ""; position: absolute; top: 0; left: 30%;
   .bar .inner { gap: 18px; padding-block: 8px; }
   nav.tabs { position: static; background: transparent; border: 0; padding: 0; margin-left: 12px; color: var(--on-acc); flex: none; }
   nav.tabs .tin { gap: 4px; max-width: none; }
-  nav.tabs button, nav.tabs a { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 9px; font-size: 14.5px; color: inherit; opacity: .78; }
-  nav.tabs button:hover, nav.tabs a:hover { opacity: 1; background: rgba(255,255,255,.12); }
+  nav.tabs button { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 9px; font-size: 14.5px; color: inherit; opacity: .78; }
+  nav.tabs button:hover { opacity: 1; background: rgba(255,255,255,.12); }
   nav.tabs button.on { color: inherit; opacity: 1; background: rgba(255,255,255,.2); }
   nav.tabs button.on::before { display: none; }
   nav.tabs svg { width: 20px; height: 20px; }
@@ -281,7 +286,7 @@ nav.tabs button.on::before { content: ""; position: absolute; top: 0; left: 30%;
     <button data-mod="pipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v8a6 6 0 0 0 6 6h7"/><path d="M4 3h4M19 15v4"/><path d="M21 20.5a1.5 1.5 0 0 1-3 0c0-1 1.5-2.5 1.5-2.5S21 19.5 21 20.5z" fill="currentColor" stroke="none"/></svg>Pipe</button>
     <button data-mod="duct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M3 9h11v9H3z"/><path d="M3 9l5-4h11l-5 4M14 18l5-4V5"/></svg>Duct</button>
     <button data-mod="help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>Help</button>
-    <a href="psychrometric/" title="Psychrometric Calculator"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M21 20V4"/><path d="M4 19c5-1 9-5 11-14"/><path d="M4 19.5c6-1 11-4 15-10"/><circle cx="13" cy="15" r="1.6" fill="currentColor" stroke="none"/></svg>Psychro</a>
+    <button data-mod="psy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M21 20V4"/><path d="M4 19c5-1 9-5 11-14"/><path d="M4 19.5c6-1 11-4 15-10"/><circle cx="13" cy="15" r="1.6" fill="currentColor" stroke="none"/></svg>Psychro</button>
   </div>
 </nav>
     <div class="useg" id="units" role="group" aria-label="Result units">
@@ -453,6 +458,11 @@ nav.tabs button.on::before { content: ""; position: absolute; top: 0; left: 30%;
   </div>
 </section>
 
+<!-- ======================= PSYCHROMETRICS ======================= -->
+<section class="mod" id="m-psy" hidden>
+  <iframe id="psy-frame" title="Psychrometric Calculator"></iframe>
+</section>
+
 <!-- ======================= HELP ======================= -->
 <section class="mod help" id="m-help" hidden>
   <div class="card">
@@ -503,8 +513,12 @@ nav.tabs button.on::before { content: ""; position: absolute; top: 0; left: 30%;
     <p class="note">1 TR = 3.517 kW · 1 L/s = 15.85 USgpm · 1 CFM = 0.4719 L/s · 1 ft wc/100 ft = 98.07 Pa/m · 1 in wc/100 ft = 8.17 Pa/m</p>
   </div>
   <div class="card">
+    <h3>Psychrometrics</h3>
+    <p>The Psychro tab is a full psychrometric calculator: air states from any two properties, cooling coil (ADP and bypass factor), heating, steam and water humidification, air mixing, psychrometric and Mollier charts, and a copyable report. Open its <b>Examples</b> for ten ready-made cases and its <b>Manual</b> for step-by-step instructions.</p>
+  </div>
+  <div class="card">
     <h3>About</h3>
-    <p>HVAC Sizer by Akshay. Pipe and duct sizing for chilled water, condenser water and air distribution. Your inputs are saved on this phone.</p>
+    <p>HVAC Sizer by Akshay. Pipe and duct sizing for chilled water, condenser water and air distribution, plus psychrometrics. Your inputs are saved on this phone.</p>
     <button class="btn" id="reset">Reset all inputs to defaults</button>
   </div>
 </section>
@@ -615,6 +629,15 @@ try {
   if (saved) ["G", "P", "D"].forEach(function (g) { for (var k in saved[g] || {}) if (k in S[g]) S[g][k] = saved[g][k]; });
 } catch (e) { }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
+(function () { var h = (location.hash || "").slice(1); if (["pipe", "duct", "psy", "help"].indexOf(h) >= 0) { S.G.mod = h; history.replaceState(null, "", location.pathname + location.search); } })();
+/* the Psychro module is a full-height frame between the app bar and the bottom tabs */
+function fitPsy() {
+  if (S.G.mod !== "psy") return;
+  var bar = document.querySelector("header.bar"), nav = document.querySelector("nav.tabs");
+  var below = getComputedStyle(nav).position === "fixed" ? nav.offsetHeight : 0;
+  $("psy-frame").style.height = Math.max(360, window.innerHeight - bar.offsetHeight - below - parseFloat(getComputedStyle(document.documentElement).paddingTop || 0)) + "px";
+}
+window.addEventListener("resize", fitPsy);
 function getV(key) { var p = key.split("."); return S[p[0]][p[1]]; }
 function setRaw(key, v) { var p = key.split("."); S[p[0]][p[1]] = v; }
 
@@ -699,11 +722,13 @@ function sync() {
   // modules & views
   var mod = S.G.mod;
   document.body.setAttribute("data-mod", mod);
-  $("m-pipe").hidden = mod !== "pipe"; $("m-duct").hidden = mod !== "duct"; $("m-help").hidden = mod !== "help";
+  $("m-pipe").hidden = mod !== "pipe"; $("m-duct").hidden = mod !== "duct"; $("m-help").hidden = mod !== "help"; $("m-psy").hidden = mod !== "psy";
+  if (mod === "psy" && !$("psy-frame").getAttribute("src")) $("psy-frame").setAttribute("src", "psychrometric/?embed=1");
   document.querySelectorAll("nav.tabs button").forEach(function (b) { var on = b.getAttribute("data-mod") === mod; b.classList.toggle("on", on); b.setAttribute("aria-current", on ? "page" : "false"); });
-  $("logo").src = mod === "duct" ? LOGO.duct : LOGO.pipe;
-  $("brand-t").textContent = mod === "duct" ? "Duct Sizer" : mod === "pipe" ? "Pipe Sizer" : "Help";
-  $("units").style.visibility = mod === "help" ? "hidden" : "visible";
+  $("logo").src = mod === "duct" ? LOGO.duct : mod === "psy" ? "psychrometric/icon-192.png" : LOGO.pipe;
+  $("brand-t").textContent = mod === "duct" ? "Duct Sizer" : mod === "pipe" ? "Pipe Sizer" : mod === "psy" ? "Psychrometrics" : "Help";
+  $("units").style.visibility = mod === "help" || mod === "psy" ? "hidden" : "visible";
+  fitPsy();
   var u = mod === "duct" ? S.G.du : S.G.pu;
   document.querySelectorAll("#units button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-u") === u); });
   $("pv-size").hidden = S.P.view !== "size"; $("pv-cap").hidden = S.P.view !== "cap";
