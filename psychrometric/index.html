@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Psychrometric calculator: air states, cooling coil, heating, steam and water humidification, mixing, psychrometric and Mollier diagrams, SI and IP units.">
+<meta name="theme-color" content="#0a6a94">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Psychrometrics">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:border-box}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Psychrometric Calculator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: drafting-table workbench. The chart is the main sheet, point and process editors sit beside it, tables and results run full width below */
+:root{
+  --bg:#e9eef1; --panel:#fbfcfd; --ink:#16222c; --muted:#596a76; --line:#c9d4db; --grid:#dbe3e8;
+  --accent:#0a6a94; --sat:#0a4f70; --wb:#9a6b12; --enth:#6b4ea0; --vol:#3c7d5a; --warn:#b5382c;
+  --chip:#e2eaef;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e161c; --panel:#152029; --ink:#e2eaef; --muted:#91a3af; --line:#2a3945; --grid:#1f2c36;
+  --accent:#4fb4e0; --sat:#7cc9ec; --wb:#d9a842; --enth:#a990dc; --vol:#6cc093; --warn:#ef7a6c; --chip:#1d2a34; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e161c; --panel:#152029; --ink:#e2eaef; --muted:#91a3af; --line:#2a3945; --grid:#1f2c36;
+  --accent:#4fb4e0; --sat:#7cc9ec; --wb:#d9a842; --enth:#a990dc; --vol:#6cc093; --warn:#ef7a6c; --chip:#1d2a34; color-scheme:dark}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.wrap{max-width:1400px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,4vw,36px);letter-spacing:.01em;margin:0;line-height:1;text-wrap:balance}
+h1 span{color:var(--accent)}
+.sub{color:var(--muted);margin:4px 0 0;font-size:14px}
+.bar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:end}
+label.f,.f{display:flex;flex-direction:column;gap:3px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;min-width:0}
+input,select,button{font:inherit;font-size:14px;color:var(--ink)}
+input,select{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 8px;min-width:0}
+input[type=number]{font-family:var(--f-mono);font-size:13px;width:96px}
+input:disabled,select:disabled{opacity:.55}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button{cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--panel);padding:6px 12px;font-weight:500}
+button.pri{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+button.ghost{background:transparent}
+button.danger{color:var(--warn)}
+button:hover{border-color:var(--accent)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;border-radius:0;padding:6px 11px;font-size:13px;background:transparent}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--panel)}
+.press{font-family:var(--f-mono);font-size:13px;padding:7px 0;color:var(--ink);text-transform:none;letter-spacing:0;font-weight:400}
+.main{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:1000px){.main{grid-template-columns:minmax(0,1fr)}}
+.side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.sheet h2{font-family:var(--f-display);font-weight:600;font-size:19px;margin:0;letter-spacing:.02em;text-transform:uppercase}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:end}
+.between{justify-content:space-between;align-items:center}
+.layers{display:flex;flex-wrap:wrap;gap:6px}
+.layers label{display:flex;gap:6px;align-items:center;font-size:13px;background:var(--chip);border-radius:20px;padding:3px 10px 3px 8px;cursor:pointer}
+.sw{width:14px;height:3px;border-radius:2px;display:inline-block}
+#cv{width:100%;display:block;cursor:crosshair;touch-action:none}
+.chartbox{position:relative;width:100%;aspect-ratio:1.5/1;min-height:300px;max-width:100%}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px;font-family:var(--f-mono);font-size:12.5px}
+.readout div{background:var(--chip);border-radius:6px;padding:5px 8px;font-variant-numeric:tabular-nums}
+.readout b{display:block;font-family:var(--f-body);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.hint{font-size:12.5px;color:var(--muted);margin:0}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:6px 9px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--grid)}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;background:var(--chip)}
+th small{text-transform:none;letter-spacing:0;font-weight:400}
+td{font-family:var(--f-mono);font-size:12.5px}
+td:first-child,th:first-child{text-align:left;font-family:var(--f-body);font-size:13px}
+td.src{font-family:var(--f-body);color:var(--muted);text-align:left;font-size:12.5px}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--chip)}
+tbody tr.sel{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+tbody tr:last-child td{border-bottom:0}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.err{color:var(--warn);font-size:13px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.grid2 input,.grid2 select{width:100%}
+.full{grid-column:1/-1}
+.note{font-size:13px;background:var(--chip);border-radius:8px;padding:8px 10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;cursor:pointer;background:var(--panel)}
+.card.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.card h3{margin:0;font-size:15px;font-weight:600;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--chip);color:var(--muted)}
+.tag.heat{color:var(--warn)} .tag.cool{color:var(--accent)} .tag.steam,.tag.water{color:var(--vol)} .tag.mix{color:var(--enth)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:6px}
+.kv div{background:var(--chip);border-radius:6px;padding:5px 8px}
+.kv b{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.kv span{font-family:var(--f-mono);font-size:14px;font-variant-numeric:tabular-nums}
+.kv em{font-style:normal;font-size:11px;color:var(--muted);margin-left:3px}
+.kv .big{grid-column:1/-1}
+.kv .big span{font-size:20px}
+.foot{font-size:12px;color:var(--muted);max-width:95ch}
+.modal{position:fixed;inset:0;background:color-mix(in srgb,var(--ink) 45%,transparent);display:flex;align-items:center;justify-content:center;z-index:20;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.modal .sheet{width:min(900px,100%);max-height:90%;}
+#rep{width:100%;min-height:340px;flex:1;font-family:var(--f-mono);font-size:12px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;resize:vertical;white-space:pre;overflow:auto}
+.sub a,.linkbtn{color:var(--accent);background:none;border:0;padding:0;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.help{position:fixed;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column}
+.help-head{border-bottom:1px solid var(--line);background:var(--panel);padding-top:env(safe-area-inset-top,0px)}
+.help-in{max-width:1120px;margin:0 auto;padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.help-body{flex:1;overflow:auto;padding-bottom:env(safe-area-inset-bottom,0px)}
+.help-title{font-family:var(--f-display);font-weight:700;font-size:22px;margin:0;letter-spacing:.01em}
+.exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:14px;padding-block:8px 24px}
+.ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.ex h3{margin:0;font-size:16px;font-weight:600;display:flex;gap:10px;align-items:baseline}
+.ex h3 .n{font-family:var(--f-display);font-size:22px;color:var(--accent);font-weight:700;line-height:1}
+.ex p{margin:0;font-size:14px}
+.ex ul{margin:0;padding-left:18px;font-size:13.5px;display:flex;flex-direction:column;gap:2px}
+.ex .tags{display:flex;flex-wrap:wrap;gap:5px}
+.ex .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+.ex button{align-self:flex-start;margin-top:auto}
+.man{display:grid;grid-template-columns:210px minmax(0,1fr);gap:28px;padding-block:8px 32px}
+@media (max-width:820px){.man{grid-template-columns:minmax(0,1fr)}.toc{position:static!important;flex-direction:row!important;flex-wrap:wrap}}
+.toc{position:sticky;top:8px;align-self:start;display:flex;flex-direction:column;gap:2px}
+.toc button{text-align:left;border:0;background:transparent;padding:5px 8px;border-radius:6px;font-size:14px;color:var(--ink)}
+.toc button:hover{background:var(--chip)}
+.art{max-width:78ch;min-width:0;display:flex;flex-direction:column;gap:12px;font-size:15px}
+.art h3{font-family:var(--f-display);font-weight:600;font-size:22px;margin:18px 0 0;letter-spacing:.01em;text-transform:uppercase;scroll-margin-top:12px}
+.art h3:first-child{margin-top:0}
+.art h4{margin:6px 0 0;font-size:15.5px;font-weight:600}
+.art p,.art ol,.art ul{margin:0}
+.art ol,.art ul{padding-left:22px;display:flex;flex-direction:column;gap:3px}
+.art .tbl{background:var(--panel)}
+.art td{white-space:normal}
+.art code{font-family:var(--f-mono);font-size:13px;background:var(--chip);padding:1px 5px;border-radius:4px}
+.art .eq{font-family:var(--f-mono);font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 10px;overflow-x:auto;white-space:pre}
+.tip{background:var(--chip);border-radius:8px;padding:9px 12px;font-size:14px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;background:var(--ink);color:var(--panel);border-radius:8px;padding:10px 14px;display:flex;gap:14px;align-items:center;font-size:14px;max-width:calc(100% - 32px);box-shadow:0 4px 18px color-mix(in srgb,var(--ink) 25%,transparent)}
+.toast button{background:transparent;color:var(--panel);border-color:color-mix(in srgb,var(--panel) 45%,transparent);padding:4px 10px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Psychrometric <span>Calculator</span></h1>
+      <p class="sub">Air states, coil and humidifier processes, mixing, psychrometric and Mollier diagrams. New here? Load one of the <button class="linkbtn" data-open="ex">examples</button> or read the <button class="linkbtn" data-open="man">manual</button>.</p>
+    </div>
+    <div class="bar">
+      <div class="f">Units<div class="seg" id="sys"><button data-v="si">SI</button><button data-v="ip">IP</button></div></div>
+      <label class="f">Airflow<select id="qu"><option value="cfm">CFM</option><option value="cmh">m³/h</option><option value="ls">L/s</option></select></label>
+      <label class="f">Capacity<select id="cu"><option value="kw">kW</option><option value="tr">TR</option><option value="btu">Btu/h</option><option value="kcal">kcal/h</option></select></label>
+      <label class="f"><span>Altitude (<span id="altu">m</span>)</span><input id="alt" type="number" step="10"></label>
+      <div class="f">Pressure<span class="press" id="pr"></span></div>
+      <button id="btn-ex">Examples</button>
+      <button id="btn-man">Manual</button>
+      <button id="btn-rep">Report</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <section class="sheet">
+      <div class="row between">
+        <div class="seg" id="dtype"><button data-v="psy">Psychrometric</button><button data-v="mol">Mollier</button></div>
+        <div class="layers" id="layers">
+          <label><input type="checkbox" data-l="rh"><span class="sw" style="background:var(--accent)"></span>RH</label>
+          <label><input type="checkbox" data-l="wb"><span class="sw" style="background:var(--wb)"></span>Wet bulb</label>
+          <label><input type="checkbox" data-l="h"><span class="sw" style="background:var(--enth)"></span>Enthalpy</label>
+          <label><input type="checkbox" data-l="v"><span class="sw" style="background:var(--vol)"></span>Sp. volume</label>
+          <label><input type="checkbox" data-l="g"><span class="sw" style="background:var(--line)"></span>DB / W grid</label>
+        </div>
+      </div>
+      <div class="chartbox" id="cbox"><canvas id="cv" aria-label="Psychrometric diagram with state points and processes"></canvas></div>
+      <div class="readout" id="ro"></div>
+      <p class="hint" id="rohint"></p>
+    </section>
+
+    <div class="side">
+      <section class="sheet">
+        <div class="row between"><h2>Point</h2><button class="pri" id="add">New point</button></div>
+        <div class="grid2" id="ped">
+          <label class="f full">Point name<input type="text" id="e-name"></label>
+          <label class="f">First property<select id="e-a"></select></label>
+          <label class="f"><span id="e-avl">Value</span><input type="number" id="e-av" step="0.1"></label>
+          <label class="f">Second property<select id="e-b"></select></label>
+          <label class="f"><span id="e-bvl">Value</span><input type="number" id="e-bv" step="0.1"></label>
+          <label class="f"><span>Airflow (<span class="qlab"></span>)</span><input type="number" id="e-q" step="10"></label>
+          <div class="f" style="justify-content:flex-end"><button class="ghost danger" id="del">Delete point</button></div>
+        </div>
+        <div class="note" id="e-derived" hidden></div>
+        <div class="err" id="e-err" hidden></div>
+      </section>
+
+      <section class="sheet">
+        <div class="row between"><h2>Process</h2>
+          <label class="f" style="flex:1;max-width:240px">Editing<select id="pe-pick"></select></label>
+        </div>
+        <div class="grid2">
+          <label class="f">Type<select id="pe-type">
+            <option value="heat">Heating</option><option value="cool">Cooling coil</option>
+            <option value="steam">Steam humidification</option><option value="water">Water humidification</option><option value="mix">Mix air</option></select></label>
+          <label class="f">Mode<select id="pe-mode"></select></label>
+          <label class="f"><span id="pe-srcl">Entering point</span><select id="pe-src"></select></label>
+          <label class="f" id="pe-src2w">With point<select id="pe-src2"></select></label>
+          <label class="f" id="pe-v1w"><span id="pe-v1l"></span><input type="number" id="pe-v1" step="0.1"></label>
+          <label class="f" id="pe-v2w"><span id="pe-v2l"></span><input type="number" id="pe-v2" step="0.01"></label>
+          <label class="f full">Resulting point name<input type="text" id="pe-name"></label>
+        </div>
+        <div class="err" id="pe-err" hidden></div>
+        <div class="row"><button class="pri" id="pe-add">Add process</button><button class="ghost danger" id="pe-del" hidden>Delete process</button></div>
+      </section>
+    </div>
+  </div>
+
+  <section class="sheet">
+    <h2>Psychrometric points</h2>
+    <div class="tbl"><table>
+      <thead id="th"></thead>
+      <tbody id="tb"></tbody>
+    </table></div>
+  </section>
+
+  <section class="sheet">
+    <h2>Processes</h2>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section class="sheet">
+    <h2>Load between two points</h2>
+    <div class="row">
+      <label class="f">Entering<select id="l-a"></select></label>
+      <label class="f">Leaving<select id="l-b"></select></label>
+      <span class="hint" id="l-q"></span>
+    </div>
+    <div class="kv" id="l-res"></div>
+  </section>
+
+  <p class="foot">Saturation pressure from the ASHRAE Hyland–Wexler correlation (over ice below 0 °C). Pressure from altitude by the standard atmosphere. Coil leaving state = bypass factor × entering + (1 − BF) × saturated air at ADP. Steam enters at 100 °C (2676 kJ/kg); spray water at the temperature you enter. Sensible load uses moist-air cp = 1.006 + 1.86·W. The Mollier diagram uses the h-x convention with moisture on the horizontal axis. The starting points are an example.</p>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <section class="sheet">
+    <div class="row between"><h2>Report</h2><div class="row"><button class="pri" id="rep-copy">Copy report</button><button id="rep-close">Close</button></div></div>
+    <textarea id="rep" readonly aria-label="Report text"></textarea>
+    <p class="hint" id="rep-msg">Plain text, ready to paste into Word, Excel or an email.</p>
+  </section>
+</div>
+
+<div class="help" id="help" hidden role="dialog" aria-modal="true" aria-label="Examples and manual">
+  <div class="help-head"><div class="help-in row between">
+    <div class="row" style="gap:14px;align-items:center"><p class="help-title">Help</p>
+      <div class="seg" id="htabs"><button data-v="ex">Examples</button><button data-v="man">Manual</button></div></div>
+    <button id="help-close">Close</button>
+  </div></div>
+  <div class="help-body" id="help-body"><div class="help-in">
+
+    <section id="pane-ex">
+      <p class="hint" style="font-size:14px;padding-top:6px">Each example loads a complete set of points and processes. Loading replaces your current work; an Undo button appears for a few seconds afterwards. Numbers listed are what you should see right after loading, in the units the example sets.</p>
+      <div class="exgrid" id="exgrid"></div>
+    </section>
+
+    <section id="pane-man" hidden>
+      <div class="man">
+        <nav class="toc" id="toc" aria-label="Manual contents">
+          <button data-go="m-start">1. Getting started</button>
+          <button data-go="m-settings">2. Units and altitude</button>
+          <button data-go="m-points">3. Defining points</button>
+          <button data-go="m-chart">4. Using the chart</button>
+          <button data-go="m-proc">5. Processes</button>
+          <button data-go="m-load">6. Load between points</button>
+          <button data-go="m-report">7. Report</button>
+          <button data-go="m-errors">8. Errors and fixes</button>
+          <button data-go="m-formulas">9. Formulas</button>
+        </nav>
+        <article class="art">
+          <h3 id="m-start">1. Getting started</h3>
+          <p>The calculator finds every property of moist air from two known values, runs heating, cooling, humidifying and mixing processes, and draws the result on a psychrometric or Mollier diagram. Your work is saved in this browser automatically.</p>
+          <div class="tbl"><table><thead><tr><th>Area</th><th style="text-align:left">What you do there</th></tr></thead><tbody>
+            <tr><td>Header bar</td><td class="src">Units (SI/IP), airflow and capacity units, altitude. Open Examples, Manual or Report.</td></tr>
+            <tr><td>Chart</td><td class="src">See points and process lines. Hover to read any state; click to move the selected point.</td></tr>
+            <tr><td>Point panel</td><td class="src">Name a point, choose its two defining properties, enter values and airflow.</td></tr>
+            <tr><td>Process panel</td><td class="src">Add or edit heating, cooling coil, steam, water spray or mixing.</td></tr>
+            <tr><td>Points table</td><td class="src">All properties of every point. Click a row to select it.</td></tr>
+            <tr><td>Process cards</td><td class="src">Capacity, sensible and latent load, SHF, condensate, steam or water amount.</td></tr>
+            <tr><td>Load between two points</td><td class="src">Load between any two points using the entering airflow.</td></tr>
+          </tbody></table></div>
+          <div class="tip">Quickest start: open <button class="linkbtn" data-ex="ahu">Example 1</button>, then change the outdoor dry bulb and watch every downstream point update.</div>
+
+          <h3 id="m-settings">2. Units and altitude</h3>
+          <p>Set altitude first, because it changes every result. Changing units only changes how values are shown; your points stay the same.</p>
+          <div class="tbl"><table><thead><tr><th>Setting</th><th style="text-align:left">Options</th></tr></thead><tbody>
+            <tr><td>Units</td><td class="src">SI (°C, g/kg, kJ/kg, m³/kg) or IP (°F, gr/lb, Btu/lb, ft³/lb). IP also sets airflow to CFM.</td></tr>
+            <tr><td>Airflow</td><td class="src">CFM, m³/h, L/s</td></tr>
+            <tr><td>Capacity</td><td class="src">kW, TR, Btu/h, kcal/h</td></tr>
+            <tr><td>Altitude</td><td class="src">m or ft. Barometric pressure updates next to it.</td></tr>
+          </tbody></table></div>
+          <p><b>Example.</b> 24 °C DB, 50 % RH holds 9.30 g/kg at sea level (101.325 kPa) but 11.18 g/kg at 1500 m (84.556 kPa), and its specific volume rises from 0.854 to 1.027 m³/kg. See <button class="linkbtn" data-ex="alt">Example 8</button>.</p>
+
+          <h3 id="m-points">3. Defining points</h3>
+          <p>A point is fixed by any two different properties: dry bulb, wet bulb, dew point, relative humidity, absolute humidity (W) or enthalpy.</p>
+          <ol><li>Click <b>New point</b>.</li><li>Type a name.</li><li>Choose the <b>First property</b> and enter its value.</li><li>Choose the <b>Second property</b> and enter its value.</li><li>Enter the <b>Airflow</b> (needed for processes).</li></ol>
+          <p>To edit a point, click its row or dot. If you change a property type, the current value is converted so the point does not move.</p>
+          <div class="tbl"><table><thead><tr><th>Inputs (sea level)</th><th>DB °C</th><th>WB °C</th><th>DP °C</th><th>RH %</th><th>W g/kg</th><th>h kJ/kg</th></tr></thead><tbody>
+            <tr><td>DB 35 °C + RH 40 %</td><td>35.0</td><td>23.9</td><td>19.4</td><td>40.0</td><td>14.13</td><td>71.5</td></tr>
+            <tr><td>DB 30 °C + WB 22 °C</td><td>30.0</td><td>22.0</td><td>18.4</td><td>50.0</td><td>13.30</td><td>64.2</td></tr>
+            <tr><td>DB 28 °C + DP 18 °C</td><td>28.0</td><td>21.2</td><td>18.0</td><td>54.6</td><td>12.93</td><td>61.2</td></tr>
+            <tr><td>DB 25 °C + h 50 kJ/kg</td><td>25.0</td><td>17.8</td><td>13.7</td><td>49.4</td><td>9.75</td><td>50.0</td></tr>
+            <tr><td>RH 60 % + WB 19 °C</td><td>24.5</td><td>19.0</td><td>16.2</td><td>60.0</td><td>11.51</td><td>53.9</td></tr>
+            <tr><td>DP 12 °C + RH 45 %</td><td>24.7</td><td>16.8</td><td>12.0</td><td>45.0</td><td>8.73</td><td>47.1</td></tr>
+          </tbody></table></div>
+          <p>These six points are <button class="linkbtn" data-ex="pairs">Example 2</button>. Pairs that cannot work: dew point + absolute humidity (both are moisture only), wet bulb + enthalpy (nearly parallel lines), or the same property twice.</p>
+
+          <h3 id="m-chart">4. Using the chart</h3>
+          <ul>
+            <li><b>Read any state:</b> hover over the chart. The boxes below show DB, WB, DP, RH, W, h, v and density at the cursor.</li>
+            <li><b>Move a point:</b> select an input point, then click on the chart. Its two inputs are recalculated. Points made by a process cannot be moved; edit the process.</li>
+            <li><b>Layers:</b> the chips switch RH, wet bulb, enthalpy (dashed), specific volume and the DB/W grid on or off.</li>
+            <li><b>Psychrometric or Mollier:</b> Psychrometric puts dry bulb along the bottom (ASHRAE style). Mollier (h-x) puts moisture along the bottom and dry bulb up the side (European style).</li>
+            <li><b>Marks:</b> a coil with an ADP shows an open circle labelled ADP on the saturation curve. Mixing shows a dashed line between the two streams.</li>
+          </ul>
+
+          <h3 id="m-proc">5. Processes</h3>
+          <p>A process takes an entering point, applies a change and creates a new calculated point that updates whenever anything upstream changes.</p>
+          <ol><li>Set <b>Editing</b> to <i>New process…</i></li><li>Choose <b>Type</b> and <b>Mode</b>.</li><li>Choose the <b>Entering point</b> (for mixing, also the <b>With point</b>).</li><li>Enter the mode's values and the result name, then click <b>Add process</b>.</li></ol>
+          <p>Click a process card, or pick it under Editing, to change it. <b>Delete process</b> also removes the point it created.</p>
+          <h4>Heating</h4>
+          <p>Constant moisture. Modes: by heating capacity, or to a leaving dry bulb. From 10 °C / 80 % RH at 1000 CFM, 5 kW gives 18.4 °C and 46.3 % RH; heating to 30 °C needs 11.86 kW.</p>
+          <h4>Cooling coil</h4>
+          <p>Leaving air = BF × entering + (1 − BF) × saturated air at the ADP.</p>
+          <div class="tbl"><table><thead><tr><th>Mode</th><th style="text-align:left">You enter</th><th style="text-align:left">Use it when</th></tr></thead><tbody>
+            <tr><td>Coil ADP + bypass factor</td><td class="src">ADP, BF</td><td class="src">You know the coil's ADP</td></tr>
+            <tr><td>Total capacity + bypass factor</td><td class="src">Capacity, BF</td><td class="src">You know the rated capacity</td></tr>
+            <tr><td>Leaving dry bulb + bypass factor</td><td class="src">Leaving DB, BF</td><td class="src">You know the off-coil temperature you need</td></tr>
+            <tr><td>Cool to saturation</td><td class="src">Nothing</td><td class="src">You want the entering air's dew point</td></tr>
+            <tr><td>Sensible only (dry coil)</td><td class="src">Leaving DB</td><td class="src">The coil stays above the dew point</td></tr>
+          </tbody></table></div>
+          <p>All five modes from one entering point are <button class="linkbtn" data-ex="coils">Example 3</button>. Typical bypass factors are 0.05 to 0.20; a deeper coil has a lower BF.</p>
+          <h4>Steam humidification</h4>
+          <p>Steam at 100 °C adds moisture with a small dry-bulb rise. Modes: by steam amount, to leaving RH, to leaving abs. humidity. Use the kg/h result to size the humidifier. See <button class="linkbtn" data-ex="winter">Example 4</button>.</p>
+          <h4>Water humidification</h4>
+          <p>Evaporation at nearly constant enthalpy: dry bulb falls, moisture rises. Enter the water temperature. Modes: by saturation efficiency, by water amount, to leaving RH. 85 % efficiency is typical of a good evaporative pad. See <button class="linkbtn" data-ex="evap">Example 5</button>.</p>
+          <h4>Mix air</h4>
+          <p>Adiabatic mixing by dry-air mass. Each stream uses its own point's airflow, so change the point airflows to change the ratio. See <button class="linkbtn" data-ex="ahu">Example 1</button> and <button class="linkbtn" data-ex="bypass">Example 7</button>.</p>
+
+          <h3 id="m-load">6. Load between two points</h3>
+          <p>Choose an <b>Entering</b> and a <b>Leaving</b> point. The panel shows total, sensible and latent load, SHF, moisture removed, ΔT, Δh and dry-air mass flow, using the entering point's airflow. Positive means heat removed. Use it for field checks of installed coils: <button class="linkbtn" data-ex="field">Example 9</button>.</p>
+
+          <h3 id="m-report">7. Report</h3>
+          <ol><li>Click <b>Report</b>.</li><li>Click <b>Copy report</b> (if copying is blocked, the text is selected; press Ctrl+C).</li><li>Paste into Word, Excel or an email. Use a fixed-width font such as Consolas so columns line up.</li></ol>
+          <p>The report lists altitude and pressure, every point, every process with its inputs and results, and the load panel result, in the units currently set. To keep a PDF, paste into Word and save as PDF.</p>
+
+          <h3 id="m-errors">8. Errors and fixes</h3>
+          <div class="tbl"><table><thead><tr><th>Message</th><th style="text-align:left">Fix</th></tr></thead><tbody>
+            <tr><td style="white-space:normal">Wet bulb / dew point cannot be above the dry bulb</td><td class="src">Check the reading; both are always at or below DB.</td></tr>
+            <tr><td style="white-space:normal">Point lies above the saturation line (fog)</td><td class="src">The values give RH over 100 %. Recheck them.</td></tr>
+            <tr><td style="white-space:normal">Dew point and absolute humidity both set moisture only</td><td class="src">Pair one of them with DB, WB, RH or enthalpy.</td></tr>
+            <tr><td style="white-space:normal">Wet bulb and enthalpy lines run almost parallel</td><td class="src">Use another pair.</td></tr>
+            <tr><td style="white-space:normal">Entering point needs an airflow above zero</td><td class="src">Enter the airflow on the entering point.</td></tr>
+            <tr><td style="white-space:normal">Leaving dry bulb is below the dew point</td><td class="src">Sensible-only mode would condense. Use an ADP, capacity or leaving-DB coil mode.</td></tr>
+            <tr><td style="white-space:normal">Capacity is more than this airflow can deliver (max X)</td><td class="src">Lower the capacity, raise the airflow or lower the BF.</td></tr>
+            <tr><td style="white-space:normal">Leaving RH must be above the entering RH</td><td class="src">Humidifier target is too low; enter a higher RH.</td></tr>
+            <tr><td style="white-space:normal">That much water cannot evaporate</td><td class="src">Use the maximum shown, or less.</td></tr>
+            <tr><td style="white-space:normal">Result lies above the saturation line</td><td class="src">Reduce the steam or water amount.</td></tr>
+          </tbody></table></div>
+          <p>A point with an error has no dot on the chart, and processes using it show an error until it is fixed. Deleting a point that a process uses asks you to click again, then removes the dependent processes too.</p>
+
+          <h3 id="m-formulas">9. Formulas and assumptions</h3>
+          <p>ASHRAE Handbook — Fundamentals equations, worked in SI and converted for display. Saturation pressure by Hyland–Wexler (over ice below 0 °C), range −40 to 90 °C.</p>
+          <div class="eq">p  = 101.325 × (1 − 2.25577×10⁻⁵ × Z)^5.2559   kPa, Z in m
+W  = 0.621945 × pw / (p − pw)
+h  = 1.006 t + W (2501 + 1.86 t)              kJ/kg dry air
+v  = 287.042 (t + 273.15)(1 + 1.607858 W) / p  m³/kg dry air
+Q total    = ṁ (h1 − h2)
+Q sensible = ṁ (1.006 + 1.86 W2)(t1 − t2)
+Q latent   = Q total − Q sensible                ṁ = airflow / v</div>
+          <ul>
+            <li>Wet bulb from the ASHRAE psychrometer equation; dew point where saturation pressure equals vapour pressure.</li>
+            <li>Coil: if the ADP is above the entering dew point the coil is dry; if the coil line would enter fog, leaving air is set saturated at the same enthalpy.</li>
+            <li>Steam at 100 °C, 2676 kJ/kg. Spray water enthalpy = 4.186 × water temperature.</li>
+            <li>IP enthalpy on the 0 °F datum (47.8 kJ/kg shows as 28.24 Btu/lb). 1 TR = 3.51685 kW; 1 CFM = 1.699 m³/h; 1 g/kg = 7 gr/lb.</li>
+            <li>Mollier diagram plots t × (1 + 1.849 W) against W.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+  </div></div>
+</div>
+<div class="toast" id="toast" hidden role="status"><span id="toast-msg"></span><button id="toast-undo" hidden>Undo</button></div>
+
+<script>
+(function(){
+/* ================= psychrometrics, SI internal: °C, kg/kg, kJ/kg, Pa, m³/h, kW ================= */
+function pws(t){const T=t+273.15;
+  if(t>=0)return Math.exp(-5.8002206e3/T+1.3914993-4.8640239e-2*T+4.1764768e-5*T*T-1.4452093e-8*T*T*T+6.5459673*Math.log(T));
+  return Math.exp(-5.6745359e3/T+6.3925247-9.677843e-3*T+6.2215701e-7*T*T+2.0747825e-9*T*T*T-9.484024e-13*T*T*T*T+4.1635019*Math.log(T));}
+const Wp=(pw,P)=>0.621945*pw/(P-pw);
+const Ws=(t,P)=>Wp(pws(t),P);
+function Wwb(t,twb,P){const s=Ws(twb,P);
+  return twb>=0?((2501-2.326*twb)*s-1.006*(t-twb))/(2501+1.86*t-4.186*twb)
+               :((2830-0.24*twb)*s-1.006*(t-twb))/(2830+1.86*t-2.1*twb);}
+function bis(f,lo,hi){for(let i=0;i<64;i++){const m=(lo+hi)/2;if(f(m)>0)hi=m;else lo=m;}return (lo+hi)/2;}
+const hOf=(t,W)=>1.006*t+W*(2501+1.86*t);
+const tHW=(h,W)=>(h-2501*W)/(1.006+1.86*W);
+const dpOf=(W,P)=>{if(W<=0)return NaN;const pw=W*P/(0.621945+W);return bis(x=>pws(x)-pw,-90,110);};
+const wbOf=(t,W,P)=>bis(x=>Wwb(t,x,P)-W,-90,t);
+function state(t,W,P){
+  const pw=W*P/(0.621945+W);
+  const v=287.042*(t+273.15)*(1+1.607858*W)/P;
+  return {db:t,W,rh:pw/pws(t)*100,dp:dpOf(W,P),wb:wbOf(t,W,P),h:hOf(t,W),v,rho:(1+W)/v};
+}
+function propOf(k,t,W,P){switch(k){
+  case 'db':return t; case 'w':return W; case 'h':return hOf(t,W);
+  case 'rh':return W*P/(0.621945+W)/pws(t)*100; case 'dp':return dpOf(W,P); case 'wb':return wbOf(t,W,P);}}
+function Wfrom(k,v,t,P){switch(k){
+  case 'rh':return Wp(v/100*pws(t),P); case 'wb':return Wwb(t,v,P); case 'dp':return Wp(pws(v),P);
+  case 'w':return v; case 'h':return (v-1.006*t)/(2501+1.86*t);}}
+function solveDef(d,P){
+  let a=d.a,b=d.b,av=+d.av,bv=+d.bv;
+  if(!isFinite(av)||!isFinite(bv))return {err:'Enter numbers for both values.'};
+  if(a===b)return {err:'Pick two different properties to define the point.'};
+  const r=a==='rh'?av:b==='rh'?bv:50; if(r<0||r>100)return {err:'Relative humidity must be from 0 to 100 %.'};
+  if(b==='db'||(a!=='db'&&(b==='dp'||b==='w'))){[a,b]=[b,a];[av,bv]=[bv,av];}
+  let t,W;
+  if(a==='db'){
+    t=av; if(t<-40||t>90)return {err:'Dry bulb must be between −40 and 90 °C.'};
+    if((b==='wb'||b==='dp')&&bv>t+1e-9)return {err:(b==='wb'?'Wet bulb':'Dew point')+' cannot be above the dry bulb.'};
+    W=Wfrom(b,bv,t,P);
+  }else{
+    if((a==='dp'||a==='w')&&(b==='dp'||b==='w'))return {err:'Dew point and absolute humidity both set moisture only. Pair one of them with a temperature, RH or enthalpy.'};
+    if((a==='wb'&&b==='h')||(a==='h'&&b==='wb'))return {err:'Wet bulb and enthalpy lines run almost parallel, so together they do not fix a point. Pick another pair.'};
+    const g=x=>{const w=Wfrom(a,av,x,P);if(!(w>=0)||w>Ws(x,P)*1.0005)return NaN;return propOf(b,x,w,P)-bv;};
+    let lo=null,hi=null,pv=null,pt=null;
+    for(let x=-40;x<=90.001;x+=0.5){const v=g(x);if(!isFinite(v))continue;
+      if(v===0){lo=hi=x;break;}
+      if(pv!==null&&Math.sign(v)!==Math.sign(pv)){lo=pt;hi=x;break;}
+      pv=v;pt=x;}
+    if(lo===null)return {err:'No air state between −40 and 90 °C matches these two values.'};
+    const s0=Math.sign(g(lo));
+    for(let i=0;i<60&&hi-lo>1e-9;i++){const m=(lo+hi)/2,v=g(m);if(isFinite(v)&&Math.sign(v)===s0)lo=m;else hi=m;}
+    t=(lo+hi)/2; W=Wfrom(a,av,t,P);
+  }
+  if(!(W>-1e-9))return {err:'These values give negative moisture. Check them.'};
+  if(W>Ws(t,P)*1.0005)return {err:'This point lies above the saturation line (fog). Check the values.'};
+  return state(t,Math.max(W,0),P);
+}
+const pressure=alt=>101325*Math.pow(1-2.25577e-5*alt,5.2559);
+
+/* ================= units ================= */
+let U={};
+const id_=x=>x;
+function buildU(){const ip=S.sys==='ip';
+  U.T=ip?{to:c=>c*1.8+32,from:f=>(f-32)/1.8,lab:'°F',d:1}:{to:id_,from:id_,lab:'°C',d:1};
+  U.dT=ip?{to:x=>x*1.8,lab:'°F',d:1}:{to:id_,lab:'K',d:1};
+  U.W=ip?{to:w=>w*7000,from:x=>x/7000,lab:'gr/lb',d:1}:{to:w=>w*1000,from:x=>x/1000,lab:'g/kg',d:2};
+  U.h=ip?{to:h=>h/2.326+7.68,from:x=>(x-7.68)*2.326,lab:'Btu/lb',d:2}:{to:id_,from:id_,lab:'kJ/kg',d:1};
+  U.dh=ip?{to:h=>h/2.326,lab:'Btu/lb',d:2}:{to:id_,lab:'kJ/kg',d:1};
+  U.v=ip?{to:v=>v*16.0185,lab:'ft³/lb',d:2}:{to:id_,lab:'m³/kg',d:3};
+  U.rho=ip?{to:r=>r/16.0185,lab:'lb/ft³',d:4}:{to:id_,lab:'kg/m³',d:3};
+  U.mw=ip?{to:x=>x*2.20462,from:x=>x/2.20462,lab:'lb/h',d:2}:{to:id_,from:id_,lab:'kg/h',d:2};
+  U.alt=ip?{to:m=>m*3.28084,from:f=>f/3.28084,lab:'ft',d:0}:{to:id_,from:id_,lab:'m',d:0};
+  U.P=ip?{to:p=>p/6894.757,lab:'psia',d:3}:{to:p=>p/1000,lab:'kPa',d:3};
+  U.q={cfm:{to:x=>x/1.699011,from:x=>x*1.699011,lab:'CFM',d:0},cmh:{to:id_,from:id_,lab:'m³/h',d:0},ls:{to:x=>x/3.6,from:x=>x*3.6,lab:'L/s',d:0}}[S.qu];
+  U.cap={kw:{to:id_,from:id_,lab:'kW',d:2},tr:{to:x=>x/3.51685,from:x=>x*3.51685,lab:'TR',d:2},btu:{to:x=>x*3412.14,from:x=>x/3412.14,lab:'Btu/h',d:0},kcal:{to:x=>x*859.845,from:x=>x/859.845,lab:'kcal/h',d:0}}[S.cu];
+  U.pct={to:id_,from:id_,lab:'%',d:1}; U.bf={to:id_,from:id_,lab:'',d:2};
+}
+const PROPS={db:'Dry bulb',wb:'Wet bulb',dp:'Dew point',rh:'Rel. humidity',w:'Abs. humidity',h:'Enthalpy'};
+const propU=k=>k==='rh'?U.pct:k==='w'?U.W:k==='h'?U.h:U.T;
+const fmt=(x,d)=>{if(!isFinite(x))return '—';const r=(+x).toFixed(d);return /^-0\.?0*$/.test(r)?r.slice(1):r;};
+const shf=(sen,tot)=>{const r=Math.abs(tot)>1e-9?sen/tot:NaN;return r>=-0.005&&r<=1.005?r:NaN;};
+const fu=(u,x)=>fmt(u.to(x),u.d);
+const inVal=(u,x)=>isFinite(+x)?String(+(+u.to(+x)).toFixed(u.d+1)):'';
+
+/* ================= processes ================= */
+const MODES={
+  heat:[{k:'cap',l:'By heating capacity',f1:['Heating capacity','cap']},{k:'db',l:'To leaving dry bulb',f1:['Leaving dry bulb','T']}],
+  cool:[{k:'adp',l:'Coil ADP + bypass factor',f1:['Apparatus dew point','T'],f2:['Bypass factor','bf']},
+        {k:'cap',l:'Total capacity + bypass factor',f1:['Total cooling capacity','cap'],f2:['Bypass factor','bf']},
+        {k:'ldb',l:'Leaving dry bulb + bypass factor',f1:['Leaving dry bulb','T'],f2:['Bypass factor','bf']},
+        {k:'sat',l:'Cool to saturation',f1:null},
+        {k:'sens',l:'Sensible only (dry coil)',f1:['Leaving dry bulb','T']}],
+  steam:[{k:'mass',l:'By steam amount',f1:['Steam amount','mw']},{k:'rh',l:'To leaving RH',f1:['Leaving RH','pct']},{k:'w',l:'To leaving abs. humidity',f1:['Leaving abs. humidity','W']}],
+  water:[{k:'eff',l:'By saturation efficiency',f1:['Saturation efficiency','pct'],f2:['Water temperature','T']},
+         {k:'mass',l:'By water amount',f1:['Water amount','mw'],f2:['Water temperature','T']},
+         {k:'rh',l:'To leaving RH',f1:['Leaving RH','pct'],f2:['Water temperature','T']}],
+  mix:[{k:'mix',l:'Adiabatic mixing'}]};
+const DEF={heat:{cap:[10],db:[30]},cool:{adp:[10,0.1],cap:[20,0.1],ldb:[13,0.1],sat:[],sens:[18]},
+  steam:{mass:[5],rh:[50],w:[0.008]},water:{eff:[85,20],mass:[5,20],rh:[60,20]},mix:{mix:[]}};
+const TNAME={heat:'Heating',cool:'Cooling coil',steam:'Steam humidification',water:'Water humidification',mix:'Mix air'};
+const ONAME={heat:'After heater',cool:'Off-coil',steam:'After steam',water:'After spray',mix:'Mixed'};
+const modeOf=pr=>MODES[pr.type].find(m=>m.k===pr.mode)||MODES[pr.type][0];
+const kindU=k=>({T:U.T,cap:U.cap,mw:U.mw,W:U.W,pct:U.pct,bf:U.bf})[k];
+
+function runProc(pr,P){
+  const A=byId(pr.src); if(!A||!A._s)return {err:'Entering point is not valid.'};
+  const s1=A._s,m=A._q/3600/s1.v;
+  if(!(m>0))return {err:'Entering point needs an airflow above zero.'};
+  let t2,W2,mt=m,o={};
+  const v1=+pr.v1,v2=+pr.v2;
+  switch(pr.type){
+  case 'heat':
+    if(pr.mode==='cap'){if(!(v1>=0))return {err:'Enter a heating capacity of zero or more.'};t2=tHW(s1.h+v1/m,s1.W);}
+    else{t2=v1;if(!(t2>=s1.db))return {err:'Leaving dry bulb must be above the entering '+fu(U.T,s1.db)+' '+U.T.lab+'.'};}
+    W2=s1.W;break;
+  case 'cool':{
+    if(pr.mode==='sens'){t2=v1;W2=s1.W;
+      if(!(t2<=s1.db))return {err:'Leaving dry bulb must be below the entering '+fu(U.T,s1.db)+' '+U.T.lab+'.'};
+      if(t2<s1.dp)return {err:'Leaving dry bulb is below the dew point ('+fu(U.T,s1.dp)+' '+U.T.lab+'), so moisture would condense. Use a coil mode with ADP.'};
+      break;}
+    if(pr.mode==='sat'){t2=s1.dp;W2=s1.W;if(!isFinite(t2))return {err:'Air has no moisture to saturate.'};break;}
+    const BF=v2; if(!(BF>=0&&BF<1))return {err:'Bypass factor must be from 0 to 0.99.'};
+    const coil=a=>{const Wa=Ws(a,P);if(Wa>=s1.W)return [BF*s1.db+(1-BF)*a,s1.W];
+      const W=BF*s1.W+(1-BF)*Wa,h=BF*s1.h+(1-BF)*hOf(a,Wa),t=tHW(h,W);if(W<=Ws(t,P))return [t,W];const ts=bis(x=>hOf(x,Ws(x,P))-h,-40,90);return [ts,Ws(ts,P)];};
+    let adp;
+    if(pr.mode==='adp'){adp=v1;if(!(adp<s1.db))return {err:'ADP must be below the entering dry bulb.'};if(adp<-30)return {err:'ADP must be above −30 °C.'};}
+    else if(pr.mode==='cap'){
+      if(!(v1>0))return {err:'Enter a cooling capacity above zero.'};
+      const q=a=>{const [t,W]=coil(a);return m*(s1.h-hOf(t,W));};
+      if(q(-30)<v1)return {err:'That capacity is more than this airflow can deliver at this bypass factor (max '+fu(U.cap,q(-30))+' '+U.cap.lab+').'};
+      adp=bis(a=>v1-q(a),-30,s1.db);}
+    else{
+      if(!(v1<s1.db))return {err:'Leaving dry bulb must be below the entering '+fu(U.T,s1.db)+' '+U.T.lab+'.'};
+      if(coil(-30)[0]>v1)return {err:'That leaving temperature is not reachable at this bypass factor.'};
+      adp=bis(a=>coil(a)[0]-v1,-30,s1.db);}
+    [t2,W2]=coil(adp);o.adp=adp;o.bf=BF;break;}
+  case 'steam':{
+    const hs=2676,at=d=>{const W=s1.W+d;return [tHW(s1.h+d*hs,W),W];};let d;
+    if(pr.mode==='mass')d=v1/3600/m;
+    else if(pr.mode==='w')d=v1-s1.W;
+    else{if(!(v1>s1.rh&&v1<=100))return {err:'Leaving RH must be above the entering '+fmt(s1.rh,1)+' % and at most 100 %.'};
+      d=bis(x=>{const [t,W]=at(x);return propOf('rh',t,W,P)-v1;},0,0.06);}
+    if(!(d>=0))return {err:'Leaving moisture must be at or above the entering value.'};
+    [t2,W2]=at(d);o.water=d*m*3600;break;}
+  case 'water':{
+    const tw=isFinite(v2)?v2:20,hw=4.186*tw,at=d=>{const W=s1.W+d;return [tHW(s1.h+d*hw,W),W];};
+    const dsat=bis(x=>{const [t,W]=at(x);return W-Ws(t,P);},0,0.06);let d;
+    if(pr.mode==='eff'){if(!(v1>=0&&v1<=100))return {err:'Saturation efficiency must be from 0 to 100 %.'};d=v1/100*dsat;}
+    else if(pr.mode==='mass'){d=v1/3600/m;if(!(d>=0))return {err:'Enter a water amount of zero or more.'};
+      if(d>dsat*1.0005)return {err:'That much water cannot evaporate. The most this air can take is '+fu(U.mw,dsat*m*3600)+' '+U.mw.lab+'.'};}
+    else{if(!(v1>s1.rh&&v1<=100))return {err:'Leaving RH must be above the entering '+fmt(s1.rh,1)+' % and at most 100 %.'};
+      d=bis(x=>{const [t,W]=at(x);return propOf('rh',t,W,P)-v1;},0,dsat);}
+    [t2,W2]=at(d);o.water=d*m*3600;o.eff=dsat>0?d/dsat*100:NaN;break;}
+  case 'mix':{
+    const B=byId(pr.src2);if(!B||!B._s)return {err:'Second point is not valid.'};
+    if(B.id===A.id)return {err:'Pick two different points to mix.'};
+    const s2=B._s,m2=B._q/3600/s2.v;if(!(m2>0))return {err:'Second point needs an airflow above zero.'};
+    mt=m+m2;W2=(m*s1.W+m2*s2.W)/mt;t2=tHW((m*s1.h+m2*s2.h)/mt,W2);o.fa=m/mt;break;}
+  }
+  if(!isFinite(t2)||!isFinite(W2))return {err:'Could not solve this process. Check the values.'};
+  if(t2<-40||t2>90)return {err:'The result falls outside −40 to 90 °C.'};
+  if(W2>Ws(t2,P)*1.0005)return {err:'The result lies above the saturation line. Reduce the amount.'};
+  const s=state(t2,Math.max(W2,0),P);
+  o.s=s;o.q=mt*s.v*3600;o.m=mt;
+  if(pr.type!=='mix'){o.tot=m*(s.h-s1.h);o.sens=m*(1.006+1.86*s.W)*(s.db-s1.db);o.lat=o.tot-o.sens;o.dw=m*(s.W-s1.W)*3600;}
+  return o;
+}
+
+/* ================= state ================= */
+const COLORS=['#d1495b','#2e86ab','#e09f3e','#3a8c5c','#8a63b8','#c46a2a','#5a7d9a','#b04f86'];
+let uid=1;
+let S;
+function blank(){return {v:2,sys:'si',qu:'cfm',cu:'kw',alt:0,dtype:'psy',layers:{rh:true,wb:true,h:true,v:false,g:true},
+  points:[],procs:[],sel:null,psel:null,draft:null,load:{a:null,b:null}};}
+function addInput(name,def,q){const p={id:uid++,name,def,q};S.points.push(p);return p;}
+function addProc(pr,name){pr.id=uid++;const out={id:uid++,name,proc:pr.id};pr.out=out.id;S.procs.push(pr);S.points.push(out);return pr;}
+function newDraft(type,src){const md=MODES[type][0].k,dv=DEF[type][md];
+  return {type,mode:md,src:src||(S.points[0]&&S.points[0].id),src2:(S.points[1]&&S.points[1].id),v1:dv[0],v2:dv[1],name:''};}
+function defaults(){
+  S=blank();uid=1;
+  const o=addInput('Outdoor',{a:'db',av:40,b:'wb',bv:26},400*1.699011);
+  const r=addInput('Room return',{a:'db',av:24,b:'rh',bv:50},1600*1.699011);
+  const mx=addProc({type:'mix',mode:'mix',src:o.id,src2:r.id},'Mixed');
+  const cl=addProc({type:'cool',mode:'adp',src:mx.out,v1:10,v2:0.1},'Off-coil');
+  S.sel=r.id;S.draft=newDraft('heat',cl.out);S.load={a:mx.out,b:cl.out};
+}
+try{const j=JSON.parse(localStorage.getItem('psychro-v2')||'null');
+  if(j&&j.v===2&&Array.isArray(j.points)&&j.points.length){S=Object.assign(blank(),j);uid=Math.max(...S.points.map(p=>p.id),...S.procs.map(p=>p.id))+1;}else defaults();
+}catch(e){defaults();}
+function save(){try{localStorage.setItem('psychro-v2',JSON.stringify(S,(k,v)=>k.startsWith('_')?undefined:v));}catch(e){}}
+
+const $=x=>document.getElementById(x);
+const byId=x=>S.points.find(p=>p.id===+x);
+const procById=x=>S.procs.find(p=>p.id===+x);
+const colorOf=p=>COLORS[S.points.indexOf(p)%COLORS.length];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const Pa=()=>pressure(+S.alt||0);
+
+function compute(){const P=Pa();
+  S.points.forEach(p=>{p._err=null;p._s=null;p._r=null;
+    if(p.proc){const pr=procById(p.proc);const r=pr?runProc(pr,P):{err:'Process missing.'};
+      if(r.err){p._err=r.err;p._q=NaN;}else{p._s=r.s;p._q=r.q;p._r=r;}}
+    else{const s=solveDef(p.def,P);p._q=+p.q;if(s.err)p._err=s.err;else p._s=s;}});
+}
+function uniqueName(base){let n=base,i=2;while(S.points.some(p=>p.name===n))n=base+' '+(i++);return n;}
+function deletePoint(pid){
+  const p=byId(pid);if(!p)return;
+  S.points=S.points.filter(x=>x.id!==pid);
+  if(p.proc)S.procs=S.procs.filter(x=>x.id!==p.proc);
+  S.procs.filter(pr=>pr.src===pid||pr.src2===pid).forEach(pr=>deletePoint(pr.out));
+}
+
+/* ================= render ================= */
+function opts(el,list,val){el.innerHTML=list.map(([v,l])=>`<option value="${v}">${esc(l)}</option>`).join('');if(list.some(x=>String(x[0])===String(val)))el.value=val;}
+const notFocused=el=>document.activeElement!==el;
+function setV(el,v){if(notFocused(el))el.value=v;}
+
+function renderAll(){
+  buildU();compute();const P=Pa();
+  document.querySelectorAll('#sys button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.sys));
+  document.querySelectorAll('#dtype button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.dtype));
+  $('qu').value=S.qu;$('cu').value=S.cu;
+  $('altu').textContent=U.alt.lab;setV($('alt'),fmt(U.alt.to(S.alt),0));
+  $('pr').textContent=fu(U.P,P)+' '+U.P.lab;
+  document.querySelectorAll('.qlab').forEach(e=>e.textContent=U.q.lab);
+  document.querySelectorAll('#layers input').forEach(i=>i.checked=!!S.layers[i.dataset.l]);
+  if(!byId(S.sel))S.sel=S.points[0]?S.points[0].id:null;
+  if(S.psel&&!procById(S.psel))S.psel=null;
+  renderPointEditor();renderProcEditor();renderTable();renderCards();renderLoad();
+  showReadout(null);draw();save();
+}
+function renderPointEditor(){
+  const p=byId(S.sel),inputs=['e-name','e-a','e-av','e-b','e-bv','e-q','del'];
+  inputs.forEach(i=>$(i).disabled=!p);
+  const plist=Object.entries(PROPS);
+  if(!p){$('e-derived').hidden=true;$('e-err').hidden=true;return;}
+  setV($('e-name'),p.name);
+  const der=!!p.proc;
+  ['e-a','e-av','e-b','e-bv','e-q'].forEach(i=>$(i).disabled=der);
+  $('e-derived').hidden=!der;
+  if(der){const pr=procById(p.proc),src=pr&&byId(pr.src);
+    $('e-derived').innerHTML=`Calculated by the <b>${esc(TNAME[pr.type])}</b> process from “${esc(src?src.name:'?')}”. Edit the process to change it. <button class="ghost" id="e-goto" style="margin-left:4px;padding:2px 8px">Edit process</button>`;
+    $('e-goto').onclick=()=>{S.psel=pr.id;renderAll();};
+    const s=p._s;
+    opts($('e-a'),plist,'db');opts($('e-b'),plist,'rh');
+    $('e-avl').textContent='Value ('+U.T.lab+')';$('e-bvl').textContent='Value (%)';
+    $('e-av').value=s?fmt(U.T.to(s.db),U.T.d):'';$('e-bv').value=s?fmt(s.rh,1):'';
+    $('e-q').value=isFinite(p._q)?fmt(U.q.to(p._q),0):'';
+  }else{
+    opts($('e-a'),plist,p.def.a);opts($('e-b'),plist,p.def.b);
+    $('e-avl').textContent='Value ('+propU(p.def.a).lab+')';$('e-bvl').textContent='Value ('+propU(p.def.b).lab+')';
+    setV($('e-av'),inVal(propU(p.def.a),p.def.av));setV($('e-bv'),inVal(propU(p.def.b),p.def.bv));
+    setV($('e-q'),fmt(U.q.to(p.q),0));
+  }
+  $('e-err').hidden=!p._err;$('e-err').textContent=p._err||'';
+}
+function curProc(){return S.psel?procById(S.psel):S.draft;}
+function renderProcEditor(){
+  const ex=!!S.psel;
+  opts($('pe-pick'),[['','New process…'],...S.procs.map((pr,i)=>{const o=byId(pr.out);return [pr.id,(i+1)+'. '+TNAME[pr.type]+' → '+(o?o.name:'')];})],S.psel||'');
+  let pr=curProc();
+  if(!pr){S.draft=newDraft('heat');pr=S.draft;}
+  if(!byId(pr.src)&&S.points[0])pr.src=S.points[0].id;
+  $('pe-type').value=pr.type;
+  const md=modeOf(pr);
+  opts($('pe-mode'),MODES[pr.type].map(m=>[m.k,m.l]),md.k);
+  // sources: for an existing process only earlier points
+  const lim=ex?S.points.findIndex(p=>p.id===pr.out):S.points.length;
+  const srcs=S.points.slice(0,lim<0?S.points.length:lim).map(p=>[p.id,p.name]);
+  opts($('pe-src'),srcs,pr.src);pr.src=+$('pe-src').value||pr.src;
+  $('pe-srcl').textContent=pr.type==='mix'?'Stream A':'Entering point';
+  $('pe-src2w').hidden=pr.type!=='mix';
+  if(pr.type==='mix'){if(!byId(pr.src2)||pr.src2===pr.src){const alt=srcs.find(s=>s[0]!==pr.src);pr.src2=alt?alt[0]:pr.src;}opts($('pe-src2'),srcs,pr.src2);}
+  const f=(w,l,inp,spec,val)=>{$(w).hidden=!spec;if(!spec)return;const u=kindU(spec[1]);$(l).textContent=spec[0]+(u.lab?' ('+u.lab+')':'');setV($(inp),inVal(u,val));};
+  f('pe-v1w','pe-v1l','pe-v1',md.f1,pr.v1);f('pe-v2w','pe-v2l','pe-v2',md.f2,pr.v2);
+  if(ex){const o=byId(pr.out);setV($('pe-name'),o?o.name:'');}else setV($('pe-name'),pr.name||uniqueName(ONAME[pr.type]));
+  $('pe-add').hidden=ex;$('pe-del').hidden=!ex;
+  let err='';
+  if(ex){const o=byId(pr.out);err=o&&o._err||'';}
+  else{const tmp={...pr};const r=runProc(tmp,Pa());err=r.err||'';}
+  $('pe-err').hidden=!err;$('pe-err').textContent=err;
+}
+function cols(){return [['DB',U.T.lab],['WB',U.T.lab],['DP',U.T.lab],['RH','%'],['W',U.W.lab],['h',U.h.lab],['v',U.v.lab],['Density',U.rho.lab],['Airflow',U.q.lab]];}
+function rowVals(s,q){return [fu(U.T,s.db),fu(U.T,s.wb),fu(U.T,s.dp),fmt(s.rh,1),fu(U.W,s.W),fu(U.h,s.h),fu(U.v,s.v),fu(U.rho,s.rho),fmt(U.q.to(q),0)];}
+function srcLabel(p){if(!p.proc)return 'Input: '+PROPS[p.def.a]+' + '+PROPS[p.def.b];const pr=procById(p.proc);return pr?TNAME[pr.type]:'';}
+function renderTable(){
+  $('th').innerHTML='<tr><th>Point</th>'+cols().map(([a,b])=>`<th>${a}<br><small>${b}</small></th>`).join('')+'<th style="text-align:left">Defined by</th></tr>';
+  $('tb').innerHTML=S.points.map(p=>{const c=p._err?`<td colspan="9" class="err" style="text-align:left;white-space:normal">${esc(p._err)}</td>`:rowVals(p._s,p._q).map(v=>`<td>${v}</td>`).join('');
+    return `<tr data-id="${p.id}" class="${p.id===S.sel?'sel':''}"><td><span class="dot" style="background:${colorOf(p)}"></span>${esc(p.name)}</td>${c}<td class="src">${esc(srcLabel(p))}</td></tr>`;}).join('');
+}
+function kv(l,v,u,cls){return `<div class="${cls||''}"><b>${l}</b><span>${v}</span><em>${u||''}</em></div>`;}
+function procFacts(pr){
+  const o=byId(pr.out),r=o&&o._r,A=byId(pr.src);if(!r)return null;const f=[];const s1=A._s,s=r.s;
+  const capPair=(l,x,big)=>f.push([l,fu(U.cap,Math.abs(x)),U.cap.lab,big]);
+  switch(pr.type){
+    case 'heat':capPair('Heating capacity',r.tot,1);f.push(['Temperature rise',fmt(U.dT.to(s.db-s1.db),1),U.dT.lab]);f.push(['Leaving DB',fu(U.T,s.db),U.T.lab]);f.push(['Leaving RH',fmt(s.rh,1),'%']);break;
+    case 'cool':capPair('Total cooling capacity',-r.tot,1);capPair('Sensible',-r.sens);capPair('Latent',-r.lat);
+      f.push(['Sensible heat factor',fmt(shf(r.sens,r.tot),2),'']);
+      f.push(['Condensate',fu(U.mw,-r.dw),U.mw.lab]);
+      if(isFinite(r.adp)){f.push(['ADP',fu(U.T,r.adp),U.T.lab]);f.push(['Bypass factor',fmt(r.bf,2),'']);}
+      f.push(['Leaving DB / WB',fu(U.T,s.db)+' / '+fu(U.T,s.wb),U.T.lab]);f.push(['Leaving RH',fmt(s.rh,1),'%']);break;
+    case 'steam':f.push(['Steam amount',fu(U.mw,r.water),U.mw.lab,1]);capPair('Humidifier load',r.tot);f.push(['Leaving DB',fu(U.T,s.db),U.T.lab]);f.push(['Leaving RH',fmt(s.rh,1),'%']);f.push(['Leaving W',fu(U.W,s.W),U.W.lab]);break;
+    case 'water':f.push(['Water evaporated',fu(U.mw,r.water),U.mw.lab,1]);f.push(['Saturation efficiency',fmt(r.eff,1),'%']);f.push(['Leaving DB',fu(U.T,s.db),U.T.lab]);f.push(['Leaving RH',fmt(s.rh,1),'%']);f.push(['Temperature drop',fmt(U.dT.to(s1.db-s.db),1),U.dT.lab]);break;
+    case 'mix':{const B=byId(pr.src2);f.push(['Mixed airflow',fmt(U.q.to(r.q),0),U.q.lab,1]);f.push([A.name+' share',fmt(r.fa*100,1),'% mass']);f.push([(B?B.name:'B')+' share',fmt((1-r.fa)*100,1),'% mass']);
+      f.push(['Mixed DB / WB',fu(U.T,s.db)+' / '+fu(U.T,s.wb),U.T.lab]);f.push(['Mixed RH',fmt(s.rh,1),'%']);break;}
+  }
+  return f;
+}
+function procTitle(pr){const A=byId(pr.src),B=byId(pr.src2),O=byId(pr.out);
+  return pr.type==='mix'?`${A?A.name:'?'} + ${B?B.name:'?'} → ${O?O.name:'?'}`:`${A?A.name:'?'} → ${O?O.name:'?'}`;}
+function procSetting(pr){const md=modeOf(pr);let t=md.l;
+  const part=spec=>spec?spec[0]+' '+fmt(kindU(spec[1]).to(spec===md.f1?pr.v1:pr.v2),kindU(spec[1]).d)+(kindU(spec[1]).lab?' '+kindU(spec[1]).lab:''):'';
+  const ps=[part(md.f1),part(md.f2)].filter(Boolean);return ps.length?t+': '+ps.join(', '):t;}
+function renderCards(){
+  if(!S.procs.length){$('cards').innerHTML='<p class="hint">No processes yet. Choose a type in the Process panel and add one.</p>';return;}
+  $('cards').innerHTML=S.procs.map(pr=>{const o=byId(pr.out),f=procFacts(pr);
+    const body=f?`<div class="kv">${f.map(([l,v,u,b])=>kv(l,v,u,b?'big':'')).join('')}</div>`:`<div class="err">${esc(o&&o._err||'Not valid')}</div>`;
+    return `<article class="card ${pr.id===S.psel?'sel':''}" data-pid="${pr.id}"><h3><span class="tag ${pr.type}">${TNAME[pr.type]}</span>${esc(procTitle(pr))}</h3><p class="hint">${esc(procSetting(pr))}</p>${body}</article>`;}).join('');
+}
+function loadCalc(){
+  const a=byId(S.load.a),b=byId(S.load.b);if(!a||!b||!a._s||!b._s)return {err:'Pick two valid points.'};
+  if(a.id===b.id)return {err:'Pick two different points.'};
+  const A=a._s,B=b._s,m=a._q/3600/A.v;if(!(m>0))return {err:'The entering point needs an airflow above zero.'};
+  const tot=m*(A.h-B.h),sen=m*(1.006+1.86*B.W)*(A.db-B.db);return {a,A,B,m,tot,sen,lat:tot-sen,mw:m*(A.W-B.W)*3600};
+}
+function renderLoad(){
+  const l=S.points.map(p=>[p.id,p.name]);opts($('l-a'),l,S.load.a);opts($('l-b'),l,S.load.b);S.load.a=+$('l-a').value;S.load.b=+$('l-b').value;
+  const r=loadCalc();
+  if(r.err){$('l-res').innerHTML=`<div class="err" style="background:none">${r.err}</div>`;$('l-q').textContent='';return;}
+  $('l-q').textContent='Uses the entering airflow of '+fmt(U.q.to(r.a._q),0)+' '+U.q.lab+'. Positive = heat removed.';
+  $('l-res').innerHTML=kv(r.tot>=0?'Total cooling':'Total heating',fu(U.cap,Math.abs(r.tot)),U.cap.lab+(S.cu!=='tr'?' · '+fmt(Math.abs(r.tot)/3.51685,2)+' TR':''),'big')+
+    kv('Sensible',fu(U.cap,r.sen),U.cap.lab)+kv('Latent',fu(U.cap,r.lat),U.cap.lab)+kv('Sensible heat factor',fmt(shf(r.sen,r.tot),2),'')+
+    kv(r.mw>=0?'Moisture removed':'Moisture added',fu(U.mw,Math.abs(r.mw)),U.mw.lab)+kv('ΔT',fmt(U.dT.to(r.A.db-r.B.db),1),U.dT.lab)+kv('Δh',fmt(U.dh.to(r.A.h-r.B.h),2),U.dh.lab)+kv('Dry-air mass flow',fmt(U.mw.to(r.m*3600),0),U.mw.lab);
+}
+function showReadout(s,above){
+  const ro=$('ro');
+  if(!s&&!above){const p=byId(S.sel);s=p&&p._s;$('rohint').textContent=p?'Showing “'+p.name+'”. Hover the chart to read any state; click to move the selected input point there.':'';}
+  if(above){ro.innerHTML='<div style="grid-column:1/-1"><b>Cursor</b>Above the saturation line</div>';return;}
+  if(!s){ro.innerHTML='';return;}
+  ro.innerHTML=[['DB',fu(U.T,s.db)+' '+U.T.lab],['WB',fu(U.T,s.wb)+' '+U.T.lab],['DP',fu(U.T,s.dp)+' '+U.T.lab],['RH',fmt(s.rh,1)+' %'],['W',fu(U.W,s.W)+' '+U.W.lab],['h',fu(U.h,s.h)+' '+U.h.lab],['v',fu(U.v,s.v)+' '+U.v.lab],['Density',fu(U.rho,s.rho)+' '+U.rho.lab]]
+    .map(([k,v])=>`<div><b>${k}</b>${v}</div>`).join('');
+}
+
+/* ================= report ================= */
+function report(){
+  const P=Pa(),pad=(s,n,l)=>{s=String(s);return l?s.padEnd(n):s.padStart(n);};
+  const L=[];L.push('PSYCHROMETRIC REPORT');L.push('='.repeat(20));
+  L.push(`Altitude: ${fu(U.alt,S.alt)} ${U.alt.lab}    Barometric pressure: ${fu(U.P,P)} ${U.P.lab}    Units: ${S.sys.toUpperCase()}`);L.push('');
+  L.push('PSYCHROMETRIC POINTS');
+  const c=cols(),nw=Math.max(14,...S.points.map(p=>p.name.length))+2;
+  L.push(pad('Point',nw,1)+c.map(([a])=>pad(a,10)).join(''));
+  L.push(pad('',nw,1)+c.map(([,b])=>pad(b,10)).join(''));
+  S.points.forEach(p=>L.push(pad(p.name,nw,1)+(p._s?rowVals(p._s,p._q).map(v=>pad(v,10)).join(''):'  '+p._err)));
+  L.push('');
+  if(S.procs.length){L.push('PROCESSES');
+    S.procs.forEach((pr,i)=>{L.push(`${i+1}. ${TNAME[pr.type]}: ${procTitle(pr)}`);L.push('   '+procSetting(pr));
+      const f=procFacts(pr);if(!f){const o=byId(pr.out);L.push('   Error: '+(o&&o._err));}else f.forEach(([l,v,u])=>L.push('   '+pad(l,24,1)+v+(u?' '+u:'')));L.push('');});}
+  const r=loadCalc();if(!r.err){L.push(`LOAD BETWEEN POINTS: ${r.a.name} → ${byId(S.load.b).name}`);
+    L.push(`   Total ${fu(U.cap,r.tot)} ${U.cap.lab}, sensible ${fu(U.cap,r.sen)} ${U.cap.lab}, latent ${fu(U.cap,r.lat)} ${U.cap.lab}, SHF ${fmt(shf(r.sen,r.tot),2)}`);}
+  return L.join('\n');
+}
+
+/* ================= events ================= */
+$('sys').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.sys=b.dataset.v;
+  if(S.sys==='ip'&&S.qu!=='cfm'){S.qu='cfm';} renderAll();});
+$('dtype').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.dtype=b.dataset.v;renderAll();});
+$('qu').addEventListener('change',e=>{S.qu=e.target.value;renderAll();});
+$('cu').addEventListener('change',e=>{S.cu=e.target.value;renderAll();});
+$('alt').addEventListener('input',e=>{const v=+e.target.value;if(isFinite(v)){S.alt=U.alt.from(v);renderAll();}});
+$('layers').addEventListener('change',e=>{S.layers[e.target.dataset.l]=e.target.checked;renderAll();});
+$('tb').addEventListener('click',e=>{const tr=e.target.closest('tr');if(!tr)return;S.sel=+tr.dataset.id;const p=byId(S.sel);if(p&&p.proc)S.psel=p.proc;renderAll();});
+$('cards').addEventListener('click',e=>{const c=e.target.closest('.card');if(!c)return;S.psel=+c.dataset.pid;const pr=procById(S.psel);if(pr)S.sel=pr.out;renderAll();});
+$('e-name').addEventListener('input',e=>{const p=byId(S.sel);if(p){p.name=e.target.value||'Point';renderAll();}});
+function propChange(which){const p=byId(S.sel);if(!p||p.proc)return;const k=$('e-'+which).value;
+  const s=p._s;p.def[which]=k;if(s)p.def[which+'v']=+propOf(k,s.db,s.W,Pa()).toFixed(6);renderAll();}
+$('e-a').addEventListener('change',()=>propChange('a'));$('e-b').addEventListener('change',()=>propChange('b'));
+$('e-av').addEventListener('input',e=>{const p=byId(S.sel);if(!p||p.proc||e.target.value==='')return;p.def.av=propU(p.def.a).from(+e.target.value);renderAll();});
+$('e-bv').addEventListener('input',e=>{const p=byId(S.sel);if(!p||p.proc||e.target.value==='')return;p.def.bv=propU(p.def.b).from(+e.target.value);renderAll();});
+$('e-q').addEventListener('input',e=>{const p=byId(S.sel);if(!p||p.proc||e.target.value==='')return;p.q=U.q.from(+e.target.value);renderAll();});
+$('add').addEventListener('click',()=>{const p=addInput(uniqueName('Point'),{a:'db',av:30,b:'rh',bv:50},U.q.from(S.qu==='cfm'?1000:1700));S.sel=p.id;renderAll();$('e-name').focus();$('e-name').select();});
+$('del').addEventListener('click',()=>{const p=byId(S.sel);if(!p)return;
+  const dep=S.procs.filter(pr=>pr.src===p.id||pr.src2===p.id).length;
+  if(dep&&$('del').dataset.arm!=='1'){$('del').dataset.arm='1';$('del').textContent='Also deletes '+dep+' dependent process'+(dep>1?'es':'')+'. Click again';return;}
+  $('del').dataset.arm='';$('del').textContent='Delete point';
+  deletePoint(p.id);S.sel=S.points[0]?S.points[0].id:null;renderAll();});
+// process editor
+$('pe-pick').addEventListener('change',e=>{S.psel=e.target.value?+e.target.value:null;if(S.psel){S.sel=procById(S.psel).out;}renderAll();});
+$('pe-type').addEventListener('change',e=>{const pr=curProc();const t=e.target.value;pr.type=t;pr.mode=MODES[t][0].k;[pr.v1,pr.v2]=DEF[t][pr.mode];
+  if(!S.psel)pr.name='';else{const o=byId(pr.out);if(o&&Object.values(ONAME).includes(o.name.replace(/ \d+$/,'')))o.name=uniqueName(ONAME[t]);}renderAll();});
+$('pe-mode').addEventListener('change',e=>{const pr=curProc();pr.mode=e.target.value;[pr.v1,pr.v2]=DEF[pr.type][pr.mode];renderAll();});
+$('pe-src').addEventListener('change',e=>{curProc().src=+e.target.value;renderAll();});
+$('pe-src2').addEventListener('change',e=>{curProc().src2=+e.target.value;renderAll();});
+$('pe-v1').addEventListener('input',e=>{if(e.target.value==='')return;const pr=curProc();pr.v1=kindU(modeOf(pr).f1[1]).from(+e.target.value);renderAll();});
+$('pe-v2').addEventListener('input',e=>{if(e.target.value==='')return;const pr=curProc();pr.v2=kindU(modeOf(pr).f2[1]).from(+e.target.value);renderAll();});
+$('pe-name').addEventListener('input',e=>{if(S.psel){const o=byId(procById(S.psel).out);if(o){o.name=e.target.value||'Point';renderAll();}}else S.draft.name=e.target.value;});
+$('pe-add').addEventListener('click',()=>{const d=S.draft;const nm=(d.name||'').trim()||uniqueName(ONAME[d.type]);
+  const pr=addProc({type:d.type,mode:d.mode,src:d.src,src2:d.src2,v1:d.v1,v2:d.v2},S.points.some(p=>p.name===nm)?uniqueName(nm):nm);
+  S.psel=pr.id;S.sel=pr.out;S.draft=newDraft(d.type,pr.out);renderAll();});
+$('pe-del').addEventListener('click',()=>{const pr=procById(S.psel);if(!pr)return;deletePoint(pr.out);S.psel=null;renderAll();});
+$('l-a').addEventListener('change',e=>{S.load.a=+e.target.value;renderAll();});
+$('l-b').addEventListener('change',e=>{S.load.b=+e.target.value;renderAll();});
+$('btn-rep').addEventListener('click',()=>{$('rep').value=report();$('rep-msg').textContent='Plain text, ready to paste into Word, Excel or an email.';$('modal').hidden=false;$('rep-copy').focus();});
+$('rep-close').addEventListener('click',()=>{$('modal').hidden=true;});
+$('modal').addEventListener('click',e=>{if(e.target===$('modal'))$('modal').hidden=true;});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').hidden=true;});
+$('rep-copy').addEventListener('click',()=>{const t=$('rep').value;
+  const fall=()=>{$('rep').focus();$('rep').select();$('rep-msg').textContent='Text selected. Press Ctrl+C (or ⌘C) to copy.';};
+  try{navigator.clipboard.writeText(t).then(()=>{$('rep-msg').textContent='Report copied.';},fall);}catch(err){fall();}});
+
+/* ================= examples ================= */
+const CF=x=>x*1.699011;
+const pt=(n,a,av,b,bv,flow)=>addInput(n,{a,av,b,bv},CF(flow)).id;
+const pc=(n,o)=>addProc(o,n).out;
+const EX=[
+ {id:'ahu',title:'Summer AHU with 20 % fresh air',tags:['Mix air','Cooling coil','Heating'],
+  desc:'Outdoor air at 40 °C DB / 26 °C WB (400 CFM) mixes with room return at 24 °C / 50 % RH (1600 CFM), passes a coil with a 10 °C ADP and 0.10 bypass factor, then is reheated to 14 °C.',
+  look:["Mixed: 27.1 °C DB / 19.0 °C WB, 46.8 % RH", "Coil: 24.21 kW (6.88 TR), SHF 0.71, 10.02 kg/h condensate", "Off-coil 11.7 °C; reheat 2.55 kW gives a 14.0 °C, 79.6 % RH supply"],build(){const o=pt('Outdoor','db',40,'wb',26,400),r=pt('Room return','db',24,'rh',50,1600);
+   const m=pc('Mixed',{type:'mix',mode:'mix',src:o,src2:r});const c=pc('Off-coil',{type:'cool',mode:'adp',src:m,v1:10,v2:0.1});
+   const s=pc('Supply',{type:'heat',mode:'db',src:c,v1:14});S.load={a:m,b:c};S.sel=o;}},
+ {id:'pairs',title:'Six ways to define a point',tags:['Points'],
+  desc:'Six points, each fixed by a different pair of properties, including two with no dry bulb (RH + wet bulb, dew point + RH). Click each row to see its inputs in the Point panel.',
+  look:["RH 60 % + WB 19 °C gives 24.5 °C DB and 11.51 g/kg", "DP 12 °C + RH 45 % gives 24.7 °C DB and 8.73 g/kg", "DB 25 °C + 50 kJ/kg gives 49.4 % RH"],build(){pt('DB + RH','db',35,'rh',40,1000);pt('DB + WB','db',30,'wb',22,1000);pt('DB + DP','db',28,'dp',18,1000);
+   pt('DB + enthalpy','db',25,'h',50,1000);pt('RH + WB','rh',60,'wb',19,1000);pt('DP + RH','dp',12,'rh',45,1000);}},
+ {id:'coils',title:'Cooling coil modes compared',tags:['Cooling coil'],
+  desc:'One entering point (27 °C DB / 19 °C WB, 2000 CFM) through all five coil modes, so you can compare leaving states, loads and SHF side by side on the chart and in the cards.',
+  look:["ADP 10 °C: 24.10 kW, SHF 0.71, leaving 11.7 °C", "20 kW: the calculator finds ADP 11.7 °C, leaving 13.3 °C, SHF 0.77", "Leaving 13 °C at BF 0.15: 21.67 kW with ADP 10.5 °C", "To saturation: 14.7 °C (the dew point), 13.93 kW, no condensate", "Dry coil to 18 °C: 10.18 kW, all sensible"],build(){const m=pt('On-coil','db',27.1,'wb',19,2000);
+   pc('ADP 10 °C, BF 0.10',{type:'cool',mode:'adp',src:m,v1:10,v2:0.1});pc('20 kW, BF 0.10',{type:'cool',mode:'cap',src:m,v1:20,v2:0.1});
+   pc('Leaving 13 °C, BF 0.15',{type:'cool',mode:'ldb',src:m,v1:13,v2:0.15});pc('To saturation',{type:'cool',mode:'sat',src:m});
+   pc('Dry coil to 18 °C',{type:'cool',mode:'sens',src:m,v1:18});S.sel=m;}},
+ {id:'winter',title:'Winter heating and steam humidification',tags:['Heating','Steam'],
+  desc:'Cold outdoor air at 5 °C / 70 % RH (1000 CFM) is preheated to 22 °C, which drops RH sharply, then steam-humidified back to 45 % RH for an office or hospital ward.',
+  look:["Preheat of 10.25 kW drops RH from 70 % to 23.1 %", "Steam 8.26 kg/h raises it to 45 % RH (7.63 g/kg)", "Supply ends at 22.5 °C: steam adds a little heat"],build(){const o=pt('Winter outdoor','db',5,'rh',70,1000);const h=pc('After preheat',{type:'heat',mode:'db',src:o,v1:22});
+   pc('Supply',{type:'steam',mode:'rh',src:h,v1:45});S.sel=o;}},
+ {id:'evap',title:'Evaporative cooling, hot dry climate',tags:['Water spray'],
+  desc:'Hot dry air at 42 °C / 15 % RH (3000 CFM) through an evaporative pad at 85 % saturation efficiency with 25 °C water. Typical of air washers in Rajasthan, Gujarat and the Gulf.',
+  look:["Leaving pad 24.6 °C, 76.8 % RH: a 17.4 K drop", "41.04 kg/h of water evaporated", "Wet bulb stays near 21.5 °C through the pad"],build(){const o=pt('Hot dry outdoor','db',42,'rh',15,3000);pc('Leaving pad',{type:'water',mode:'eff',src:o,v1:85,v2:25});S.sel=o;}},
+ {id:'doas',title:'100 % fresh-air unit in the monsoon',tags:['Cooling coil','Heating'],
+  desc:'Humid monsoon air at 32 °C / 80 % RH (1000 CFM) is cooled to 12 °C with a deep coil (BF 0.05) to dry it, then reheated to 18 °C. Shows how large the latent share is for fresh air.',
+  look:["Coil 31.66 kW (9.00 TR) for only 1000 CFM", "Latent 20.92 kW, SHF 0.34, 29.41 kg/h condensate", "Off-coil 12 °C saturated; reheat 3.22 kW to 18 °C, 67.9 % RH"],build(){const o=pt('Monsoon outdoor','db',32,'rh',80,1000);const c=pc('Off-coil',{type:'cool',mode:'ldb',src:o,v1:12,v2:0.05});
+   pc('Supply',{type:'heat',mode:'db',src:c,v1:18});S.load={a:o,b:c};S.sel=o;}},
+ {id:'bypass',title:'Return-air bypass instead of reheat',tags:['Mix air','Cooling coil'],
+  desc:'Same outdoor and room air as Example 1, but 400 CFM of return air bypasses the coil and mixes with the off-coil air. The supply is warmed without any reheat energy.',
+  look:["Coil handles 1600 CFM: 20.52 kW against 24.21 kW in Example 1", "Supply 14.3 °C, 81.2 % RH at 1908 CFM with no reheat", "Supply is slightly wetter: 8.22 against 7.91 g/kg"],build(){const o=pt('Outdoor','db',40,'wb',26,400),r=pt('Return to coil','db',24,'rh',50,1200),b=pt('Bypass return','db',24,'rh',50,400);
+   const m=pc('Mixed',{type:'mix',mode:'mix',src:o,src2:r});const c=pc('Off-coil',{type:'cool',mode:'adp',src:m,v1:10,v2:0.1});
+   pc('Supply',{type:'mix',mode:'mix',src:c,src2:b});S.load={a:m,b:c};S.sel=b;}},
+ {id:'alt',title:'High-altitude site at 1500 m',tags:['Altitude','Mix air','Cooling coil'],
+  desc:'Example 1 repeated at 1500 m (84.6 kPa). Same temperatures and RH, but more moisture per kg and larger specific volume, so the coil load in kW changes for the same CFM.',
+  look:["Barometric pressure 84.556 kPa", "Room 24 °C / 50 % RH holds 11.18 g/kg (9.30 at sea level)", "Coil 21.85 kW, SHF 0.65, against 24.21 kW, SHF 0.71 at sea level"],build(){S.alt=1500;const o=pt('Outdoor','db',40,'wb',26,400),r=pt('Room return','db',24,'rh',50,1600);
+   const m=pc('Mixed',{type:'mix',mode:'mix',src:o,src2:r});const c=pc('Off-coil',{type:'cool',mode:'adp',src:m,v1:10,v2:0.1});S.load={a:m,b:c};S.sel=o;}},
+ {id:'field',title:'Field check of a fan-coil unit',tags:['Points','Load'],
+  desc:'Sling readings across an installed fan-coil: 26 °C DB / 19 °C WB entering and 14 °C DB / 13 °C WB leaving, at a measured 800 CFM. The load panel gives the coil\'s actual capacity.',
+  look:["Load panel: 7.55 kW (2.15 TR) total", "Sensible 5.37 kW, latent 2.17 kW, SHF 0.71", "3.07 kg/h moisture removed; compare with the unit's rating"],build(){const a=pt('Entering (measured)','db',26,'wb',19,800),b=pt('Leaving (measured)','db',14,'wb',13,800);S.load={a,b};S.sel=a;}},
+ {id:'ip',title:'IP units: US design day',tags:['IP units','Mix air','Cooling coil'],
+  desc:'95 °F DB / 75 °F WB outdoor at 500 CFM with 75 °F / 50 % RH return at 1500 CFM, through a coil with a 50 °F ADP and 0.10 bypass factor. Shown in °F, gr/lb, Btu/lb and TR.',
+  look:["Mixed 79.9 °F DB / 65.9 °F WB", "Coil 6.71 TR, SHF 0.71, 21.65 lb/h condensate", "Off-coil 53.0 °F DB / 51.8 °F WB"],build(){S.sys='ip';S.cu='tr';const o=pt('Outdoor','db',35,'wb',(75-32)/1.8,500),r=pt('Room return','db',(75-32)/1.8,'rh',50,1500);
+   const m=pc('Mixed',{type:'mix',mode:'mix',src:o,src2:r});const c=pc('Off-coil',{type:'cool',mode:'adp',src:m,v1:10,v2:0.1});S.load={a:m,b:c};S.sel=o;}}
+];
+let backup=null,toastT=null;
+const resetUid=()=>{uid=Math.max(0,...S.points.map(p=>p.id),...S.procs.map(p=>p.id))+1;};
+function toast(msg,undo){$('toast-msg').textContent=msg;$('toast-undo').hidden=!undo;$('toast').hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{$('toast').hidden=true;},undo?9000:3500);}
+function loadExample(id){const ex=EX.find(e=>e.id===id);if(!ex)return;
+  try{backup=JSON.stringify(S,(k,v)=>k.startsWith('_')?undefined:v);}catch(e){backup=null;}
+  const keep={layers:S.layers,dtype:S.dtype,qu:S.qu};
+  S=blank();uid=1;S.layers=keep.layers;S.dtype=keep.dtype;
+  ex.build();
+  const last=S.points[S.points.length-1];
+  if(!S.sel)S.sel=last.id;
+  if(!S.load.a){S.load={a:S.points[0].id,b:last.id};}
+  S.draft=newDraft('heat',last.id);S.psel=null;
+  closeHelp();renderAll();window.scrollTo({top:0,behavior:'smooth'});
+  toast('Loaded Example '+(EX.indexOf(ex)+1)+': '+ex.title,!!backup);}
+$('toast-undo').addEventListener('click',()=>{if(!backup)return;try{S=Object.assign(blank(),JSON.parse(backup));resetUid();backup=null;renderAll();toast('Your previous work is back.');}catch(e){}});
+function renderExamples(){
+  $('exgrid').innerHTML=EX.map((e,i)=>`<article class="ex"><h3><span class="n">${i+1}</span>${esc(e.title)}</h3>
+    <div class="tags">${e.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+    <p>${esc(e.desc)}</p>${e.look.length?`<div class="lbl">What you should see</div><ul>${e.look.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>`:''}
+    <button class="pri" data-load="${e.id}">Load example</button></article>`).join('');}
+let lastFocus=null;
+function openHelp(tab){lastFocus=document.activeElement;renderExamples();setHelpTab(tab||'ex');$('help').hidden=false;document.body.style.overflow='hidden';$('help-close').focus();}
+function closeHelp(){$('help').hidden=true;document.body.style.overflow='';if(lastFocus&&lastFocus.focus)try{lastFocus.focus();}catch(e){}}
+function setHelpTab(t){document.querySelectorAll('#htabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===t));$('pane-ex').hidden=t!=='ex';$('pane-man').hidden=t!=='man';$('help-body').scrollTop=0;}
+$('btn-ex').addEventListener('click',()=>openHelp('ex'));
+$('btn-man').addEventListener('click',()=>openHelp('man'));
+document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openHelp(b.dataset.open)));
+$('htabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setHelpTab(b.dataset.v);});
+$('help-close').addEventListener('click',closeHelp);
+$('help').addEventListener('click',e=>{const l=e.target.closest('[data-load],[data-ex]');if(l){loadExample(l.dataset.load||l.dataset.ex);return;}
+  const g=e.target.closest('[data-go]');if(g){const t=$(g.dataset.go);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('help').hidden)closeHelp();});
+
+/* ================= chart ================= */
+const cv=$('cv'),ctx=cv.getContext('2d');
+let G=null,hover=null;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const KM=1.86/1.006;
+function draw(){
+  const box=$('cbox').getBoundingClientRect(),w=box.width,h=box.height,dpr=window.devicePixelRatio||1;
+  if(w<10)return;
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+  const P=Pa(),ip=S.sys==='ip',mol=S.dtype==='mol';
+  const C={ink:css('--ink'),muted:css('--muted'),grid:css('--grid'),line:css('--line'),acc:css('--accent'),sat:css('--sat'),wb:css('--wb'),en:css('--enth'),vol:css('--vol'),bg:css('--panel')};
+  const valid=S.points.filter(p=>p._s);
+  const narrow=w<560;
+  // ranges in display units
+  const tStep=ip?10:5,tMinor=ip?2:1,wStep=ip?20:5,wMinor=ip?5:1;
+  let Tmin=ip?10:-10,Tmax=ip?120:50,Wmax=ip?210:30;
+  valid.forEach(p=>{Tmax=Math.max(Tmax,Math.ceil((U.T.to(p._s.db)+(ip?5:3))/tStep)*tStep);Tmin=Math.min(Tmin,Math.floor((U.T.to(p._s.db)-(ip?5:3))/tStep)*tStep);
+    Wmax=Math.max(Wmax,Math.ceil((U.W.to(p._s.W)+(ip?20:3))/wStep)*wStep);});
+  const tmin=U.T.from(Tmin),tmax=U.T.from(Tmax),wmax=U.W.from(Wmax);
+  const xr=mol?[0,Wmax]:[Tmin,Tmax],yr=mol?[Tmin,Tmax]:[0,Wmax];
+  const L=mol?(narrow?32:40):(narrow?10:14),R=mol?(narrow?12:16):(narrow?36:46),T=14,B=narrow?32:38;
+  const px=x=>L+(x-xr[0])/(xr[1]-xr[0])*(w-L-R),py=y=>h-B-(y-yr[0])/(yr[1]-yr[0])*(h-T-B);
+  const cd=(t,W)=>mol?[U.W.to(W),U.T.to(t*(1+KM*W))]:[U.T.to(t),U.W.to(W)];
+  const Pt=(t,W)=>{const [x,y]=cd(t,W);return [px(x),py(y)];};
+  G={mol,L,R,T,B,w,h,xr,yr,P};
+  const inFrame=([x,y],m)=>x>=L+m&&x<=w-R-m&&y>=T+m&&y<=h-B-m;
+  ctx.font=(narrow?10:11)+'px '+css('--f-mono');ctx.lineCap='round';ctx.lineJoin='round';
+  // saturation boundary
+  const sat=[];for(let t=tmin;t<=tmax+1e-9;t+=0.25){const g=Ws(t,P);if(g>wmax){sat.push([bis(x=>Ws(x,P)-wmax,t-0.25,t),wmax]);break;}sat.push([t,g]);}
+  const last=sat[sat.length-1];
+  ctx.save();ctx.beginPath();ctx.rect(L,T,w-L-R,h-T-B);ctx.clip();
+  ctx.beginPath();const p0=Pt(tmin,0);ctx.moveTo(p0[0],p0[1]);sat.forEach(([t,g])=>{const p=Pt(t,g);ctx.lineTo(p[0],p[1]);});
+  if(last[1]>=wmax-1e-12){const p=Pt(tmax*1.2+20,wmax);ctx.lineTo(p[0],p[1]);}
+  {const p=Pt(tmax*1.2+20,0);ctx.lineTo(p[0],p[1]);}ctx.closePath();ctx.clip();
+  const poly=(n,fn)=>{ctx.beginPath();for(let i=0;i<=n;i++){const [t,W]=fn(i/n);const p=Pt(t,W);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}ctx.stroke();};
+  ctx.lineWidth=1;
+  if(S.layers.g){ctx.strokeStyle=C.grid;
+    for(let Td=Math.ceil(Tmin/tMinor)*tMinor;Td<=Tmax;Td+=tMinor){const t=U.T.from(Td);ctx.globalAlpha=Td%tStep?0.5:1;poly(1,f=>[t,f*wmax]);}
+    for(let Wd=wMinor;Wd<=Wmax;Wd+=wMinor){const W=U.W.from(Wd);ctx.globalAlpha=Wd%wStep?0.5:1;poly(1,f=>[tmin+(tmax*1.2+20-tmin)*f,W]);}
+    ctx.globalAlpha=1;}
+  if(S.layers.v){ctx.strokeStyle=C.vol;ctx.globalAlpha=.7;const vs=ip?[11.5,16.5,0.5]:[0.74,1.02,0.01];
+    for(let vd=vs[0];vd<=vs[1]+1e-9;vd+=vs[2]){const v=ip?vd/16.0185:vd;const tv=v*P/287.042-273.15;poly(10,f=>{const t=tmin+(tv-tmin)*f;return [t,Math.max(0,(v*P/(287.042*(t+273.15))-1)/1.607858)];});}}
+  if(S.layers.h){ctx.strokeStyle=C.en;ctx.globalAlpha=.55;ctx.setLineDash([4,3]);const hs=ip?[0,70,5]:[-10,160,10];
+    for(let hd=hs[0];hd<=hs[1];hd+=hs[2]){const hh=U.h.from(hd);const te=hh/1.006;poly(8,f=>{const t=tmin+(te-tmin)*f;return [t,Math.max(0,(hh-1.006*t)/(2501+1.86*t))];});}ctx.setLineDash([]);}
+  if(S.layers.wb){ctx.strokeStyle=C.wb;ctx.globalAlpha=.7;const ws=ip?5:5;
+    for(let Td=Math.ceil(Tmin/ws)*ws;Td<Tmax;Td+=ws){const tw=U.T.from(Td);const t0=bis(x=>-Wwb(x,tw,P),tw,tw+120);poly(10,f=>{const t=tw+(t0-tw)*f;return [t,Math.max(0,Wwb(t,tw,P))];});}}
+  if(S.layers.rh){ctx.strokeStyle=C.acc;ctx.globalAlpha=.6;for(let r=10;r<100;r+=10)poly(70,f=>{const t=tmin+(tmax-tmin)*f;return [t,Wp(r/100*pws(t),P)];});}
+  ctx.globalAlpha=1;ctx.restore();
+  // saturation curve
+  ctx.save();ctx.beginPath();ctx.rect(L,T,w-L-R,h-T-B);ctx.clip();
+  ctx.strokeStyle=C.sat;ctx.lineWidth=2.2;ctx.beginPath();sat.forEach(([t,g],i)=>{const p=Pt(t,g);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);});ctx.stroke();ctx.restore();
+  // frame
+  ctx.lineWidth=1;ctx.strokeStyle=C.line;ctx.strokeRect(L,T,w-L-R,h-T-B);
+  // axes
+  ctx.fillStyle=C.muted;
+  const tl=narrow?2:1;
+  if(!mol){
+    ctx.textAlign='center';ctx.textBaseline='top';
+    for(let Td=Math.ceil(Tmin/tStep)*tStep,i=0;Td<=Tmax;Td+=tStep,i++)if(i%tl===0)ctx.fillText(Td,px(Td),h-B+5);
+    ctx.fillText('Dry bulb '+U.T.lab,(L+w-R)/2,h-B+(narrow?17:20));
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    for(let Wd=0;Wd<=Wmax;Wd+=wStep)ctx.fillText(Wd,w-R+5,py(Wd));
+    ctx.save();ctx.translate(w-3,(T+h-B)/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('Abs. humidity '+U.W.lab,0,0);ctx.restore();
+  }else{
+    ctx.textAlign='center';ctx.textBaseline='top';
+    for(let Wd=0;Wd<=Wmax;Wd+=wStep)ctx.fillText(Wd,px(Wd),h-B+5);
+    ctx.fillText('Abs. humidity '+U.W.lab,(L+w-R)/2,h-B+(narrow?17:20));
+    ctx.textAlign='right';ctx.textBaseline='middle';
+    for(let Td=Math.ceil(Tmin/tStep)*tStep;Td<=Tmax;Td+=tStep)ctx.fillText(Td,L-5,py(Td));
+    ctx.save();ctx.translate(9,(T+h-B)/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText('Dry bulb '+U.T.lab,0,-8);ctx.restore();
+  }
+  // line labels
+  const tag=(txt,p,col,al,bgPad)=>{if(!inFrame(p,4))return;ctx.textAlign=al||'center';ctx.textBaseline='middle';
+    if(bgPad){const tw=ctx.measureText(txt).width;const x0=al==='left'?p[0]-2:al==='right'?p[0]-tw-2:p[0]-tw/2-2;ctx.save();ctx.fillStyle=C.bg;ctx.globalAlpha=.85;ctx.fillRect(x0,p[1]-7,tw+4,14);ctx.restore();}
+    ctx.fillStyle=col;ctx.fillText(txt,p[0],p[1]);};
+  const off=(p,dx,dy)=>[p[0]+dx,p[1]+dy];
+  if(S.layers.rh){for(let r=10;r<100;r+=narrow?20:10){
+    for(let t=tmax-(tmax-tmin)*0.02;t>tmin;t-=0.25){const W=Wp(r/100*pws(t),P);const p=Pt(t,W);if(inFrame(p,14)){tag(r+'%',p,C.acc,'center',1);break;}}}}
+  const satOff=mol?[7,7,'left']:[-6,-8,'right'];
+  if(S.layers.wb){for(let Td=Math.ceil(Tmin/5)*5;Td<Tmax;Td+=(ip||narrow)?10:5){const t=U.T.from(Td);tag(String(Td),off(Pt(t,Ws(t,P)),satOff[0],satOff[1]),C.wb,satOff[2]);}}
+  if(S.layers.h&&!narrow){const hs=ip?[5,70,5]:[0,160,10];for(let hd=hs[0];hd<=hs[1];hd+=hs[2]){const hh=U.h.from(hd);
+    const ts=bis(x=>hOf(x,Ws(x,P))-hh,-40,90);if(ts<=tmin)continue;tag(String(hd),off(Pt(ts,Ws(ts,P)),satOff[0]*2.4,satOff[1]*2.2),C.en,satOff[2]);}}
+  if(S.layers.v&&!narrow){const vs=ip?[12,16.5,0.5]:[0.76,1.02,0.02];for(let vd=vs[0];vd<=vs[1]+1e-9;vd+=vs[2]){const v=ip?vd/16.0185:vd;const tv=v*P/287.042-273.15;
+    tag(vd.toFixed(ip?1:2),off(Pt(tv,0),mol?20:0,mol?0:-9),C.vol,'center');}}
+  // processes
+  const P2=s=>Pt(s.db,s.W);
+  const arrow=(a,b,col,dash)=>{const [x1,y1]=a,[x2,y2]=b;ctx.strokeStyle=col;ctx.lineWidth=2;ctx.setLineDash(dash||[]);
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);
+    if(!dash){const an=Math.atan2(y2-y1,x2-x1),d=Math.hypot(x2-x1,y2-y1);if(d>22){const mx=x1+(x2-x1)*.55,my=y1+(y2-y1)*.55;ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(mx+8*Math.cos(an),my+8*Math.sin(an));ctx.lineTo(mx-6*Math.cos(an-0.5),my-6*Math.sin(an-0.5));ctx.lineTo(mx-6*Math.cos(an+0.5),my-6*Math.sin(an+0.5));ctx.fill();}}};
+  ctx.save();ctx.beginPath();ctx.rect(L,T,w-L-R,h-T-B);ctx.clip();
+  S.procs.forEach(pr=>{const o=byId(pr.out),A=byId(pr.src);if(!o||!o._s||!A||!A._s)return;const sel=pr.id===S.psel;
+    const col=sel?C.acc:C.ink;
+    if(pr.type==='mix'){const B=byId(pr.src2);if(B&&B._s){arrow(P2(A._s),P2(B._s),C.muted,[5,4]);}arrow(P2(A._s),P2(o._s),col);if(B&&B._s)arrow(P2(B._s),P2(o._s),col);}
+    else{arrow(P2(A._s),P2(o._s),col);
+      const r=o._r;if(r&&isFinite(r.adp)){const pa=Pt(r.adp,Ws(r.adp,P));ctx.strokeStyle=C.muted;ctx.lineWidth=1.2;ctx.setLineDash([3,3]);ctx.beginPath();const pe=P2(o._s);ctx.moveTo(pe[0],pe[1]);ctx.lineTo(pa[0],pa[1]);ctx.stroke();ctx.setLineDash([]);
+        ctx.fillStyle=C.bg;ctx.strokeStyle=C.sat;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(pa[0],pa[1],4,0,7);ctx.fill();ctx.stroke();
+        ctx.fillStyle=C.sat;ctx.font='600 10px '+css('--f-body');ctx.textAlign=mol?'left':'right';ctx.textBaseline='bottom';ctx.fillText('ADP',pa[0]+(mol?7:-6),pa[1]-3);ctx.font=(narrow?10:11)+'px '+css('--f-mono');}}});
+  // points
+  valid.forEach(p=>{const [x,y]=P2(p._s),sel=p.id===S.sel;
+    ctx.fillStyle=colorOf(p);ctx.strokeStyle=C.bg;ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,sel?7:5.5,0,7);ctx.fill();ctx.stroke();
+    if(sel){ctx.strokeStyle=colorOf(p);ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,11,0,7);ctx.stroke();}
+    ctx.font='600 '+(narrow?11:12)+'px '+css('--f-body');const tw=ctx.measureText(p.name).width;
+    let lx=x+11,al='left';if(lx+tw>w-R-2){lx=x-11;al='right';}
+    ctx.save();ctx.fillStyle=C.bg;ctx.globalAlpha=.8;ctx.fillRect(al==='left'?lx-2:lx-tw-2,y-17,tw+4,15);ctx.restore();
+    ctx.fillStyle=C.ink;ctx.textAlign=al;ctx.textBaseline='bottom';ctx.fillText(p.name,lx,y-3);});
+  ctx.font=(narrow?10:11)+'px '+css('--f-mono');
+  if(hover){const p=Pt(hover.t,hover.W);ctx.strokeStyle=C.muted;ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(p[0],T);ctx.lineTo(p[0],h-B);ctx.moveTo(L,p[1]);ctx.lineTo(w-R,p[1]);ctx.stroke();ctx.setLineDash([]);}
+  ctx.restore();
+}
+function evtPos(e){if(!G)return null;const r=cv.getBoundingClientRect(),X=e.clientX-r.left,Y=e.clientY-r.top;
+  if(X<G.L||X>G.w-G.R||Y<G.T||Y>G.h-G.B)return null;
+  const x=G.xr[0]+(X-G.L)/(G.w-G.L-G.R)*(G.xr[1]-G.xr[0]),y=G.yr[0]+(G.h-G.B-Y)/(G.h-G.T-G.B)*(G.yr[1]-G.yr[0]);
+  let t,W;if(G.mol){W=U.W.from(x);t=U.T.from(y)/(1+KM*W);}else{t=U.T.from(x);W=U.W.from(y);}
+  if(W<0)return null;return {t,W};}
+cv.addEventListener('pointermove',e=>{const p=evtPos(e);hover=p;
+  if(!p){showReadout(null);draw();return;}
+  if(p.W>Ws(p.t,G.P)){showReadout(null,true);}else{showReadout(state(p.t,p.W,G.P));$('rohint').textContent='Cursor reading. Click to move the selected input point here.';}
+  draw();});
+cv.addEventListener('pointerleave',()=>{hover=null;showReadout(null);draw();});
+cv.addEventListener('click',e=>{const p=evtPos(e),sp=byId(S.sel);if(!p||!sp)return;
+  if(sp.proc){$('rohint').textContent='“'+sp.name+'” is calculated by a process, so it cannot be moved. Select an input point.';return;}
+  const W=Math.min(p.W,Ws(p.t,G.P));const t=+p.t.toFixed(2);
+  sp.def.av=+propOf(sp.def.a,t,W,G.P).toFixed(6);sp.def.bv=+propOf(sp.def.b,t,W,G.P).toFixed(6);renderAll();});
+new ResizeObserver(()=>draw()).observe($('cbox'));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',draw);
+new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+document.fonts&&document.fonts.ready.then(draw);
+renderAll();
+})();
+</script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}</script>
+</body>
+</html>
