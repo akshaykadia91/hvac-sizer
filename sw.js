@@ -1,5 +1,5 @@
 // HVAC Sizer offline support (pipe, duct and psychrometrics): keep the app files on the device and serve them without internet.
-var CACHE = "hvac-sizer-v4";
+var CACHE = "hvac-sizer-v5";
 var FILES = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png", "psychrometric/", "psychrometric/?embed=1", "psychrometric/index.html", "psychrometric/icon-192.png"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES); }).then(function () { return self.skipWaiting(); }));

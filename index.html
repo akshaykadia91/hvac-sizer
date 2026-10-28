@@ -631,6 +631,7 @@ try {
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
 function modFromHash() { var h = (location.hash || "").slice(1); if (["pipe", "duct", "psy", "help"].indexOf(h) < 0) return false; S.G.mod = h; history.replaceState(null, "", location.pathname + location.search); return true; }
 modFromHash();
+window.hvacSetMod = function (m) { if (["pipe", "duct", "psy", "help"].indexOf(m) < 0) return; S.G.mod = m; save(); sync(); render(); window.scrollTo(0, 0); };
 window.addEventListener("hashchange", function () { if (modFromHash()) { save(); sync(); render(); window.scrollTo(0, 0); } });
 /* the Psychro module is a full-height frame between the app bar and the bottom tabs */
 function fitPsy() {
