@@ -629,7 +629,9 @@ try {
   if (saved) ["G", "P", "D"].forEach(function (g) { for (var k in saved[g] || {}) if (k in S[g]) S[g][k] = saved[g][k]; });
 } catch (e) { }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
-(function () { var h = (location.hash || "").slice(1); if (["pipe", "duct", "psy", "help"].indexOf(h) >= 0) { S.G.mod = h; history.replaceState(null, "", location.pathname + location.search); } })();
+function modFromHash() { var h = (location.hash || "").slice(1); if (["pipe", "duct", "psy", "help"].indexOf(h) < 0) return false; S.G.mod = h; history.replaceState(null, "", location.pathname + location.search); return true; }
+modFromHash();
+window.addEventListener("hashchange", function () { if (modFromHash()) { save(); sync(); render(); window.scrollTo(0, 0); } });
 /* the Psychro module is a full-height frame between the app bar and the bottom tabs */
 function fitPsy() {
   if (S.G.mod !== "psy") return;

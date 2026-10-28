@@ -7,7 +7,7 @@
 <script>if(!/[?&]embed=1/.test(location.search)){location.replace("../#psy");}else{document.documentElement.classList.add("embed");}</script>
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:border-box}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}
-.embed #sizer-link{display:none}.embed header>div:first-child{display:none}html.embed{padding-top:0;padding-bottom:0}.embed .wrap{padding-block:14px 28px}</style>
+.embed header>div:first-child{display:none}html.embed{padding-top:0;padding-bottom:0}.embed .wrap{padding-block:14px 28px}</style>
 <title>Psychrometric Calculator</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,6 +49,7 @@ button.danger{color:var(--warn)}
 button:hover{border-color:var(--accent)}
 .btnlink{display:inline-flex;align-items:center;border-radius:6px;border:1px solid var(--line);background:var(--panel);padding:6px 12px;font-weight:500;font-size:14px;color:var(--ink);text-decoration:none}
 .btnlink:hover{border-color:var(--accent)}
+.appnav{display:flex;flex-wrap:wrap;gap:8px}
 .btnlink:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--panel)}
 .seg button{border:0;border-radius:0;padding:6px 11px;font-size:13px;background:transparent}
@@ -146,6 +147,7 @@ tbody tr:last-child td{border-bottom:0}
 
 
 <div class="wrap">
+  <nav class="appnav" aria-label="Other HVAC Sizer tools"><a class="btnlink" href="../#pipe" target="_top">← Pipe Sizer</a><a class="btnlink" href="../#duct" target="_top">Duct Sizer</a></nav>
   <header>
     <div>
       <h1>Psychrometric <span>Calculator</span></h1>
@@ -157,7 +159,6 @@ tbody tr:last-child td{border-bottom:0}
       <label class="f">Capacity<select id="cu"><option value="kw">kW</option><option value="tr">TR</option><option value="btu">Btu/h</option><option value="kcal">kcal/h</option></select></label>
       <label class="f"><span>Altitude (<span id="altu">m</span>)</span><input id="alt" type="number" step="10"></label>
       <div class="f">Pressure<span class="press" id="pr"></span></div>
-      <a class="btnlink" id="sizer-link" href="https://akshaykadia91.github.io/hvac-sizer/" target="_blank" rel="noopener">HVAC Sizer</a>
       <button id="btn-ex">Examples</button>
       <button id="btn-man">Manual</button>
       <button id="btn-rep">Report</button>
