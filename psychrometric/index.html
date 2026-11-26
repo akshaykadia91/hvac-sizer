@@ -95,7 +95,7 @@ tbody tr:last-child td{border-bottom:0}
 .card.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .card h3{margin:0;font-size:15px;font-weight:600;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 .tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--chip);color:var(--muted)}
-.tag.heat{color:var(--warn)} .tag.cool{color:var(--accent)} .tag.steam,.tag.water{color:var(--vol)} .tag.mix{color:var(--enth)}
+.tag.heat{color:var(--warn)} .tag.cool{color:var(--accent)} .tag.steam,.tag.water{color:var(--vol)} .tag.mix{color:var(--enth)} .tag.hr{color:var(--wb)} .tag.room{color:var(--sat)}
 .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:6px}
 .kv div{background:var(--chip);border-radius:6px;padding:5px 8px}
 .kv b{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -156,6 +156,7 @@ tbody tr:last-child td{border-bottom:0}
     <div class="bar">
       <div class="f">Units<div class="seg" id="sys"><button data-v="si">SI</button><button data-v="ip">IP</button></div></div>
       <label class="f">Airflow<select id="qu"><option value="cfm">CFM</option><option value="cmh">m³/h</option><option value="ls">L/s</option></select></label>
+      <label class="f">Airflow basis<select id="qb"><option value="act">Actual</option><option value="std">Standard air</option></select></label>
       <label class="f">Capacity<select id="cu"><option value="kw">kW</option><option value="tr">TR</option><option value="btu">Btu/h</option><option value="kcal">kcal/h</option></select></label>
       <label class="f"><span>Altitude (<span id="altu">m</span>)</span><input id="alt" type="number" step="10"></label>
       <div class="f">Pressure<span class="press" id="pr"></span></div>
@@ -175,6 +176,7 @@ tbody tr:last-child td{border-bottom:0}
           <label><input type="checkbox" data-l="h"><span class="sw" style="background:var(--enth)"></span>Enthalpy</label>
           <label><input type="checkbox" data-l="v"><span class="sw" style="background:var(--vol)"></span>Sp. volume</label>
           <label><input type="checkbox" data-l="g"><span class="sw" style="background:var(--line)"></span>DB / W grid</label>
+          <label><input type="checkbox" data-l="cz"><span class="sw" style="background:var(--vol);height:8px;opacity:.5"></span>Comfort zone</label>
         </div>
       </div>
       <div class="chartbox" id="cbox"><canvas id="cv" aria-label="Psychrometric diagram with state points and processes"></canvas></div>
@@ -192,7 +194,7 @@ tbody tr:last-child td{border-bottom:0}
           <label class="f">Second property<select id="e-b"></select></label>
           <label class="f"><span id="e-bvl">Value</span><input type="number" id="e-bv" step="0.1"></label>
           <label class="f"><span>Airflow (<span class="qlab"></span>)</span><input type="number" id="e-q" step="10"></label>
-          <div class="f" style="justify-content:flex-end"><button class="ghost danger" id="del">Delete point</button></div>
+          <div class="f" style="justify-content:flex-end;flex-direction:row;gap:8px"><button class="ghost" id="dup">Copy point</button><button class="ghost danger" id="del">Delete point</button></div>
         </div>
         <div class="note" id="e-derived" hidden></div>
         <div class="err" id="e-err" hidden></div>
@@ -205,12 +207,13 @@ tbody tr:last-child td{border-bottom:0}
         <div class="grid2">
           <label class="f">Type<select id="pe-type">
             <option value="heat">Heating</option><option value="cool">Cooling coil</option>
-            <option value="steam">Steam humidification</option><option value="water">Water humidification</option><option value="mix">Mix air</option></select></label>
+            <option value="steam">Steam humidification</option><option value="water">Water humidification</option><option value="mix">Mix air</option><option value="hr">Heat recovery</option><option value="room">Supply air for room load</option></select></label>
           <label class="f">Mode<select id="pe-mode"></select></label>
           <label class="f"><span id="pe-srcl">Entering point</span><select id="pe-src"></select></label>
-          <label class="f" id="pe-src2w">With point<select id="pe-src2"></select></label>
+          <label class="f" id="pe-src2w"><span id="pe-src2l">With point</span><select id="pe-src2"></select></label>
           <label class="f" id="pe-v1w"><span id="pe-v1l"></span><input type="number" id="pe-v1" step="0.1"></label>
           <label class="f" id="pe-v2w"><span id="pe-v2l"></span><input type="number" id="pe-v2" step="0.01"></label>
+          <label class="f" id="pe-v3w"><span id="pe-v3l"></span><input type="number" id="pe-v3" step="0.1"></label>
           <label class="f full">Resulting point name<input type="text" id="pe-name"></label>
         </div>
         <div class="err" id="pe-err" hidden></div>
@@ -228,7 +231,7 @@ tbody tr:last-child td{border-bottom:0}
   </section>
 
   <section class="sheet">
-    <h2>Processes</h2>
+    <div class="row between"><h2>Processes</h2><div class="row"><label class="f"><span>Chilled water ΔT (<span class="dtlab">K</span>)</span><input type="number" id="cwdt" step="0.5"></label><label class="f"><span>Hot water ΔT (<span class="dtlab">K</span>)</span><input type="number" id="hwdt" step="0.5"></label></div></div>
     <div class="cards" id="cards"></div>
   </section>
 
@@ -247,7 +250,7 @@ tbody tr:last-child td{border-bottom:0}
 
 <div class="modal" id="modal" hidden>
   <section class="sheet">
-    <div class="row between"><h2>Report</h2><div class="row"><button class="pri" id="rep-copy">Copy report</button><button id="rep-close">Close</button></div></div>
+    <div class="row between"><h2>Report</h2><div class="row"><button class="pri" id="rep-copy">Copy report</button><button id="rep-csv">Copy points as CSV</button><button id="rep-close">Close</button></div></div>
     <textarea id="rep" readonly aria-label="Report text"></textarea>
     <p class="hint" id="rep-msg">Plain text, ready to paste into Word, Excel or an email.</p>
   </section>
@@ -262,7 +265,7 @@ tbody tr:last-child td{border-bottom:0}
   <div class="help-body" id="help-body"><div class="help-in">
 
     <section id="pane-ex">
-      <p class="hint" style="font-size:14px;padding-top:6px">Each example loads a complete set of points and processes. Loading replaces your current work; an Undo button appears for a few seconds afterwards. Numbers listed are what you should see right after loading, in the units the example sets.</p>
+      <p class="hint" style="font-size:14px;padding-top:6px">Each example loads a complete set of points and processes. Sixteen examples cover every feature. Loading replaces your current work; an Undo button appears for a few seconds afterwards. Numbers listed are what you should see right after loading, in the units the example sets.</p>
       <div class="exgrid" id="exgrid"></div>
     </section>
 
@@ -299,13 +302,16 @@ tbody tr:last-child td{border-bottom:0}
             <tr><td>Units</td><td class="src">SI (°C, g/kg, kJ/kg, m³/kg) or IP (°F, gr/lb, Btu/lb, ft³/lb). IP also sets airflow to CFM.</td></tr>
             <tr><td>Airflow</td><td class="src">CFM, m³/h, L/s</td></tr>
             <tr><td>Capacity</td><td class="src">kW, TR, Btu/h, kcal/h</td></tr>
+            <tr><td>Airflow basis</td><td class="src"><b>Actual</b>: volume at each point's own temperature and moisture. <b>Standard air</b>: dry-air mass flow ÷ 1.2 kg/m³, the basis most catalogues and schedules quote. Standard airflow stays the same through a coil; actual airflow shrinks as air cools.</td></tr>
             <tr><td>Altitude</td><td class="src">m or ft. Barometric pressure updates next to it.</td></tr>
           </tbody></table></div>
+          <p>An airflow you type is stored on the basis selected at that moment. Switching basis later only changes how it is shown. <button class="linkbtn" data-ex="dc">Example 16</button> uses standard air.</p>
           <p><b>Example.</b> 24 °C DB, 50 % RH holds 9.30 g/kg at sea level (101.325 kPa) but 11.18 g/kg at 1500 m (84.556 kPa), and its specific volume rises from 0.854 to 1.027 m³/kg. See <button class="linkbtn" data-ex="alt">Example 8</button>.</p>
 
           <h3 id="m-points">3. Defining points</h3>
           <p>A point is fixed by any two different properties: dry bulb, wet bulb, dew point, relative humidity, absolute humidity (W) or enthalpy.</p>
           <ol><li>Click <b>New point</b>.</li><li>Type a name.</li><li>Choose the <b>First property</b> and enter its value.</li><li>Choose the <b>Second property</b> and enter its value.</li><li>Enter the <b>Airflow</b> (needed for processes).</li></ol>
+          <p><b>Copy point</b> makes a duplicate of the selected input point, handy for trying a variation such as a different outdoor design condition.</p>
           <p>To edit a point, click its row or dot. If you change a property type, the current value is converted so the point does not move.</p>
           <div class="tbl"><table><thead><tr><th>Inputs (sea level)</th><th>DB °C</th><th>WB °C</th><th>DP °C</th><th>RH %</th><th>W g/kg</th><th>h kJ/kg</th></tr></thead><tbody>
             <tr><td>DB 35 °C + RH 40 %</td><td>35.0</td><td>23.9</td><td>19.4</td><td>40.0</td><td>14.13</td><td>71.5</td></tr>
@@ -321,14 +327,15 @@ tbody tr:last-child td{border-bottom:0}
           <ul>
             <li><b>Read any state:</b> hover over the chart. The boxes below show DB, WB, DP, RH, W, h, v and density at the cursor.</li>
             <li><b>Move a point:</b> select an input point, then click on the chart. Its two inputs are recalculated. Points made by a process cannot be moved; edit the process.</li>
-            <li><b>Layers:</b> the chips switch RH, wet bulb, enthalpy (dashed), specific volume and the DB/W grid on or off.</li>
+            <li><b>Layers:</b> the chips switch RH, wet bulb, enthalpy (dashed), specific volume, the DB/W grid and the comfort zone on or off.</li>
+            <li><b>Comfort zone:</b> a shaded band from 20 to 26 °C and 30 to 60 % RH, a typical design comfort range. It is a quick visual check, not a full ASHRAE 55 (PMV) assessment.</li>
             <li><b>Psychrometric or Mollier:</b> Psychrometric puts dry bulb along the bottom (ASHRAE style). Mollier (h-x) puts moisture along the bottom and dry bulb up the side (European style).</li>
-            <li><b>Marks:</b> a coil with an ADP shows an open circle labelled ADP on the saturation curve. Mixing shows a dashed line between the two streams.</li>
+            <li><b>Marks:</b> a coil with an ADP shows an open circle labelled ADP on the saturation curve. Mixing shows a dashed line between the two streams. Heat recovery shows a dotted line to the exhaust air and an open circle for the exhaust leaving state. A room-load process draws the room SHR line from the room point to saturation.</li>
           </ul>
 
           <h3 id="m-proc">5. Processes</h3>
           <p>A process takes an entering point, applies a change and creates a new calculated point that updates whenever anything upstream changes.</p>
-          <ol><li>Set <b>Editing</b> to <i>New process…</i></li><li>Choose <b>Type</b> and <b>Mode</b>.</li><li>Choose the <b>Entering point</b> (for mixing, also the <b>With point</b>).</li><li>Enter the mode's values and the result name, then click <b>Add process</b>.</li></ol>
+          <ol><li>Set <b>Editing</b> to <i>New process…</i></li><li>Choose <b>Type</b> and <b>Mode</b>.</li><li>Choose the <b>Entering point</b> (for mixing, also the <b>With point</b>; for heat recovery, the <b>Exhaust air</b>).</li><li>Enter the mode's values and the result name, then click <b>Add process</b>.</li></ol>
           <p>Click a process card, or pick it under Editing, to change it. <b>Delete process</b> also removes the point it created.</p>
           <h4>Heating</h4>
           <p>Constant moisture. Modes: by heating capacity, or to a leaving dry bulb. From 10 °C / 80 % RH at 1000 CFM, 5 kW gives 18.4 °C and 46.3 % RH; heating to 30 °C needs 11.86 kW.</p>
@@ -347,13 +354,29 @@ tbody tr:last-child td{border-bottom:0}
           <h4>Water humidification</h4>
           <p>Evaporation at nearly constant enthalpy: dry bulb falls, moisture rises. Enter the water temperature. Modes: by saturation efficiency, by water amount, to leaving RH. 85 % efficiency is typical of a good evaporative pad. See <button class="linkbtn" data-ex="evap">Example 5</button>.</p>
           <h4>Mix air</h4>
-          <p>Adiabatic mixing by dry-air mass. Each stream uses its own point's airflow, so change the point airflows to change the ratio. See <button class="linkbtn" data-ex="ahu">Example 1</button> and <button class="linkbtn" data-ex="bypass">Example 7</button>.</p>
+          <p>Adiabatic mixing by dry-air mass. Two modes:</p>
+          <ul><li><b>By each point's airflow:</b> each stream uses its own point's airflow. See <button class="linkbtn" data-ex="ahu">Example 1</button> and <button class="linkbtn" data-ex="bypass">Example 7</button>.</li>
+          <li><b>By % of stream A + total airflow:</b> enter the fresh-air percentage (by volume) and the unit's total airflow; the stream points need no airflow of their own. The card shows each stream's airflow. See <button class="linkbtn" data-ex="pctmix">Example 12</button>.</li></ul>
+          <h4>Heat recovery</h4>
+          <p>Exchanges energy between fresh air (the entering point) and exhaust air (a second point with its own airflow). Leaving fresh air = entering + effectiveness × (exhaust − entering), scaled by the smaller-to-fresh mass flow ratio.</p>
+          <div class="tbl"><table><thead><tr><th>Mode</th><th style="text-align:left">You enter</th><th style="text-align:left">Typical values</th></tr></thead><tbody>
+            <tr><td>Sensible (plate / heat pipe / run-around)</td><td class="src">Sensible effectiveness</td><td class="src">Plate 50–70 %, heat pipe 45–60 %, run-around coil 40–55 %</td></tr>
+            <tr><td>Enthalpy wheel</td><td class="src">Sensible and latent effectiveness</td><td class="src">70–80 % sensible, 60–75 % latent</td></tr>
+          </tbody></table></div>
+          <p>The card shows energy recovered (sensible and latent), the fresh-air leaving state and the exhaust leaving state. If a sensible exchanger would cool the fresh air below its dew point, it condenses and the card says so. See <button class="linkbtn" data-ex="wheel">Example 13</button> and <button class="linkbtn" data-ex="plate">Example 14</button>.</p>
+          <h4>Supply air for room load</h4>
+          <p>The entering point is the room condition. Enter the room's sensible and latent load, then either the <b>supply dry bulb</b> (the calculator finds the airflow) or the <b>supply airflow</b> (it finds the supply temperature). The result point is the supply state the coil must deliver.</p>
+          <ul><li>Room SHR = sensible ÷ (sensible + latent).</li><li>The dashed <b>room SHR line</b> runs from the room point through the supply point; where it meets saturation is the coil ADP that can serve this room with no reheat.</li><li>If the supply state would be above saturation, raise the supply temperature or airflow.</li></ul>
+          <p>See <button class="linkbtn" data-ex="office">Example 11</button> (office) and <button class="linkbtn" data-ex="dc">Example 16</button> (data hall, SHR 1.0).</p>
+          <h4>Chilled and hot water flow</h4>
+          <p>Every cooling coil card shows the chilled water flow, and every heating card the hot water flow, from capacity ÷ (4.186 × ΔT), in L/s and USGPM. Set the water ΔT values at the top of the Processes section (defaults 5.5 K chilled, 11 K hot).</p>
 
           <h3 id="m-load">6. Load between two points</h3>
-          <p>Choose an <b>Entering</b> and a <b>Leaving</b> point. The panel shows total, sensible and latent load, SHF, moisture removed, ΔT, Δh and dry-air mass flow, using the entering point's airflow. Positive means heat removed. Use it for field checks of installed coils: <button class="linkbtn" data-ex="field">Example 9</button>.</p>
+          <p>Choose an <b>Entering</b> and a <b>Leaving</b> point. The panel shows total, sensible and latent load, SHF, moisture removed, ΔT, Δh, dry-air mass flow and (for cooling) the chilled water flow, using the entering point's airflow. Positive means heat removed. Use it for field checks of installed coils: <button class="linkbtn" data-ex="field">Example 9</button>.</p>
 
           <h3 id="m-report">7. Report</h3>
           <ol><li>Click <b>Report</b>.</li><li>Click <b>Copy report</b> (if copying is blocked, the text is selected; press Ctrl+C).</li><li>Paste into Word, Excel or an email. Use a fixed-width font such as Consolas so columns line up.</li></ol>
+          <p><b>Copy points as CSV</b> copies the points table in comma-separated form. Paste it into Excel and each value lands in its own cell.</p>
           <p>The report lists altitude and pressure, every point, every process with its inputs and results, and the load panel result, in the units currently set. To keep a PDF, paste into Word and save as PDF.</p>
 
           <h3 id="m-errors">8. Errors and fixes</h3>
@@ -368,6 +391,9 @@ tbody tr:last-child td{border-bottom:0}
             <tr><td style="white-space:normal">Leaving RH must be above the entering RH</td><td class="src">Humidifier target is too low; enter a higher RH.</td></tr>
             <tr><td style="white-space:normal">That much water cannot evaporate</td><td class="src">Use the maximum shown, or less.</td></tr>
             <tr><td style="white-space:normal">Result lies above the saturation line</td><td class="src">Reduce the steam or water amount.</td></tr>
+            <tr><td style="white-space:normal">Supply air would be above saturation</td><td class="src">Room-load process: the SHR is too low for that supply temperature. Raise the supply temperature or airflow.</td></tr>
+            <tr><td style="white-space:normal">Latent load is too large for this airflow</td><td class="src">Raise the airflow or lower the supply temperature.</td></tr>
+            <tr><td style="white-space:normal">“Point” has no airflow (load panel)</td><td class="src">Choose an entering point that has an airflow, or give it one.</td></tr>
           </tbody></table></div>
           <p>A point with an error has no dot on the chart, and processes using it show an error until it is fixed. Deleting a point that a process uses asks you to click again, then removes the dependent processes too.</p>
 
@@ -382,6 +408,8 @@ Q sensible = ṁ (1.006 + 1.86 W2)(t1 − t2)
 Q latent   = Q total − Q sensible                ṁ = airflow / v</div>
           <ul>
             <li>Wet bulb from the ASHRAE psychrometer equation; dew point where saturation pressure equals vapour pressure.</li>
+            <li>Heat recovery: t₂ = t₁ + εs·(ṁmin/ṁfresh)·(tₑ − t₁), W₂ = W₁ + εl·(ṁmin/ṁfresh)·(Wₑ − W₁); exhaust leaving state from an energy and moisture balance.</li>
+            <li>Room load: ṁ = Qs ÷ (cp × (troom − tsupply)), hsupply = hroom − (Qs + Ql) ÷ ṁ. Standard air: 1.2 kg/m³.</li>
             <li>Coil: if the ADP is above the entering dew point the coil is dry; if the coil line would enter fog, leaving air is set saturated at the same enthalpy.</li>
             <li>Steam at 100 °C, 2676 kJ/kg. Spray water enthalpy = 4.186 × water temperature.</li>
             <li>IP enthalpy on the 0 °F datum (47.8 kJ/kg shows as 28.24 Btu/lb). 1 TR = 3.51685 kW; 1 CFM = 1.699 m³/h; 1 g/kg = 7 gr/lb.</li>
@@ -457,7 +485,7 @@ let U={};
 const id_=x=>x;
 function buildU(){const ip=S.sys==='ip';
   U.T=ip?{to:c=>c*1.8+32,from:f=>(f-32)/1.8,lab:'°F',d:1}:{to:id_,from:id_,lab:'°C',d:1};
-  U.dT=ip?{to:x=>x*1.8,lab:'°F',d:1}:{to:id_,lab:'K',d:1};
+  U.dT=ip?{to:x=>x*1.8,from:x=>x/1.8,lab:'°F',d:1}:{to:id_,from:id_,lab:'K',d:1};
   U.W=ip?{to:w=>w*7000,from:x=>x/7000,lab:'gr/lb',d:1}:{to:w=>w*1000,from:x=>x/1000,lab:'g/kg',d:2};
   U.h=ip?{to:h=>h/2.326+7.68,from:x=>(x-7.68)*2.326,lab:'Btu/lb',d:2}:{to:id_,from:id_,lab:'kJ/kg',d:1};
   U.dh=ip?{to:h=>h/2.326,lab:'Btu/lb',d:2}:{to:id_,lab:'kJ/kg',d:1};
@@ -469,6 +497,7 @@ function buildU(){const ip=S.sys==='ip';
   U.q={cfm:{to:x=>x/1.699011,from:x=>x*1.699011,lab:'CFM',d:0},cmh:{to:id_,from:id_,lab:'m³/h',d:0},ls:{to:x=>x/3.6,from:x=>x*3.6,lab:'L/s',d:0}}[S.qu];
   U.cap={kw:{to:id_,from:id_,lab:'kW',d:2},tr:{to:x=>x/3.51685,from:x=>x*3.51685,lab:'TR',d:2},btu:{to:x=>x*3412.14,from:x=>x/3412.14,lab:'Btu/h',d:0},kcal:{to:x=>x*859.845,from:x=>x/859.845,lab:'kcal/h',d:0}}[S.cu];
   U.pct={to:id_,from:id_,lab:'%',d:1}; U.bf={to:id_,from:id_,lab:'',d:2};
+  if(S.qb==='std')U.q=Object.assign({},U.q,{lab:U.q.lab+' std'});
 }
 const PROPS={db:'Dry bulb',wb:'Wet bulb',dp:'Dew point',rh:'Rel. humidity',w:'Abs. humidity',h:'Enthalpy'};
 const propU=k=>k==='rh'?U.pct:k==='w'?U.W:k==='h'?U.h:U.T;
@@ -489,20 +518,30 @@ const MODES={
   water:[{k:'eff',l:'By saturation efficiency',f1:['Saturation efficiency','pct'],f2:['Water temperature','T']},
          {k:'mass',l:'By water amount',f1:['Water amount','mw'],f2:['Water temperature','T']},
          {k:'rh',l:'To leaving RH',f1:['Leaving RH','pct'],f2:['Water temperature','T']}],
-  mix:[{k:'mix',l:'Adiabatic mixing'}]};
+  mix:[{k:'mix',l:'By each point\'s airflow'},{k:'pct',l:'By % of stream A + total airflow',f1:['Stream A share (by volume)','pct'],f2:['Total airflow','q']}],
+  hr:[{k:'sens',l:'Sensible (plate / heat pipe / run-around)',f1:['Sensible effectiveness','pct']},
+      {k:'tot',l:'Enthalpy wheel (sensible + latent)',f1:['Sensible effectiveness','pct'],f2:['Latent effectiveness','pct']}],
+  room:[{k:'db',l:'Set supply dry bulb',f1:['Room sensible load','cap'],f2:['Room latent load','cap'],f3:['Supply dry bulb','T']},
+        {k:'flow',l:'Set supply airflow',f1:['Room sensible load','cap'],f2:['Room latent load','cap'],f3:['Supply airflow','q']}]};
 const DEF={heat:{cap:[10],db:[30]},cool:{adp:[10,0.1],cap:[20,0.1],ldb:[13,0.1],sat:[],sens:[18]},
-  steam:{mass:[5],rh:[50],w:[0.008]},water:{eff:[85,20],mass:[5,20],rh:[60,20]},mix:{mix:[]}};
-const TNAME={heat:'Heating',cool:'Cooling coil',steam:'Steam humidification',water:'Water humidification',mix:'Mix air'};
-const ONAME={heat:'After heater',cool:'Off-coil',steam:'After steam',water:'After spray',mix:'Mixed'};
+  steam:{mass:[5],rh:[50],w:[0.008]},water:{eff:[85,20],mass:[5,20],rh:[60,20]},mix:{mix:[],pct:[20,3398]},
+  hr:{sens:[65],tot:[75,70]},room:{db:[20,4,14],flow:[20,4,6796]}};
+const TNAME={heat:'Heating',cool:'Cooling coil',steam:'Steam humidification',water:'Water humidification',mix:'Mix air',hr:'Heat recovery',room:'Supply air for room load'};
+const ONAME={heat:'After heater',cool:'Off-coil',steam:'After steam',water:'After spray',mix:'Mixed',hr:'After recovery',room:'Required supply'};
+const TWO=t=>t==='mix'||t==='hr';
 const modeOf=pr=>MODES[pr.type].find(m=>m.k===pr.mode)||MODES[pr.type][0];
-const kindU=k=>({T:U.T,cap:U.cap,mw:U.mw,W:U.W,pct:U.pct,bf:U.bf})[k];
+const kindU=k=>({T:U.T,cap:U.cap,mw:U.mw,W:U.W,pct:U.pct,bf:U.bf,q:U.q})[k];
+/* dry-air mass flow (kg/s) for a volume flow in m³/h, on the chosen airflow basis */
+const massOf=(Q,s)=>S.qb==='std'?Q*1.2/3600:Q/3600/s.v;
+const dispQ=(q,s)=>s&&isFinite(q)?(S.qb==='std'?q/s.v/1.2:q):NaN;
 
 function runProc(pr,P){
   const A=byId(pr.src); if(!A||!A._s)return {err:'Entering point is not valid.'};
-  const s1=A._s,m=A._q/3600/s1.v;
-  if(!(m>0))return {err:'Entering point needs an airflow above zero.'};
+  const s1=A._s;let m=A._q/3600/s1.v;
+  const needQ=!(pr.type==='room'||(pr.type==='mix'&&pr.mode==='pct'));
+  if(needQ&&!(m>0))return {err:'Entering point needs an airflow above zero.'};
   let t2,W2,mt=m,o={};
-  const v1=+pr.v1,v2=+pr.v2;
+  const v1=+pr.v1,v2=+pr.v2,v3=+pr.v3;
   switch(pr.type){
   case 'heat':
     if(pr.mode==='cap'){if(!(v1>=0))return {err:'Enter a heating capacity of zero or more.'};t2=tHW(s1.h+v1/m,s1.W);}
@@ -549,15 +588,46 @@ function runProc(pr,P){
   case 'mix':{
     const B=byId(pr.src2);if(!B||!B._s)return {err:'Second point is not valid.'};
     if(B.id===A.id)return {err:'Pick two different points to mix.'};
-    const s2=B._s,m2=B._q/3600/s2.v;if(!(m2>0))return {err:'Second point needs an airflow above zero.'};
-    mt=m+m2;W2=(m*s1.W+m2*s2.W)/mt;t2=tHW((m*s1.h+m2*s2.h)/mt,W2);o.fa=m/mt;break;}
+    const s2=B._s,m2=B._q/3600/s2.v;
+    let ma=m,mb=m2;
+    if(pr.mode==='pct'){if(!(v1>=0&&v1<=100))return {err:'Stream A share must be from 0 to 100 %.'};if(!(v2>0))return {err:'Enter a total airflow above zero.'};
+      ma=massOf(v2*v1/100,s1);mb=massOf(v2*(1-v1/100),s2);}
+    else if(!(m2>0))return {err:'Second point needs an airflow above zero.'};
+    mt=ma+mb;W2=(ma*s1.W+mb*s2.W)/mt;t2=tHW((ma*s1.h+mb*s2.h)/mt,W2);o.fa=ma/mt;o.ma=ma;o.mb=mb;break;}
+  case 'hr':{
+    const B=byId(pr.src2);if(!B||!B._s)return {err:'Exhaust point is not valid.'};
+    if(B.id===A.id)return {err:'Pick a different point for the exhaust air.'};
+    const se=B._s,me=B._q/3600/se.v;if(!(me>0))return {err:'Exhaust point needs an airflow above zero.'};
+    const es=v1/100,el=pr.mode==='tot'?v2/100:0;
+    if(!(es>=0&&es<=1))return {err:'Sensible effectiveness must be from 0 to 100 %.'};
+    if(pr.mode==='tot'&&!(el>=0&&el<=1))return {err:'Latent effectiveness must be from 0 to 100 %.'};
+    const r=Math.min(m,me)/m;
+    t2=s1.db+es*r*(se.db-s1.db);W2=s1.W+el*r*(se.W-s1.W);
+    if(W2>Ws(t2,P)){const h=hOf(t2,W2);t2=bis(x=>hOf(x,Ws(x,P))-h,-40,90);W2=Ws(t2,P);o.cond=true;}
+    const h2=hOf(t2,W2),he=se.h-m/me*(h2-s1.h),We=se.W-m/me*(W2-s1.W);
+    let te=tHW(he,We),Wx=We;if(Wx>Ws(te,P)){te=bis(x=>hOf(x,Ws(x,P))-he,-40,90);Wx=Ws(te,P);}
+    o.ex=state(te,Math.max(Wx,0),P);o.exName=B.name;o.ratio=me/m;break;}
+  case 'room':{
+    const Qs=v1,Ql=v2;if(!(Qs>0))return {err:'Enter a room sensible load above zero.'};if(!(Ql>=0))return {err:'Room latent load must be zero or more.'};
+    const tr=s1.db,hr=s1.h;let ms,ts,Wsup=s1.W;
+    if(pr.mode==='db'){ts=v3;if(!(ts<tr))return {err:'Supply dry bulb must be below the room '+fu(U.T,tr)+' '+U.T.lab+'.'};
+      for(let i=0;i<40;i++){ms=Qs/((1.006+1.86*Wsup)*(tr-ts));Wsup=(hr-(Qs+Ql)/ms-1.006*ts)/(2501+1.86*ts);}}
+    else{if(!(v3>0))return {err:'Enter a supply airflow above zero.'};ts=tr-5;
+      for(let i=0;i<60;i++){const sv=287.042*(ts+273.15)*(1+1.607858*Math.max(Wsup,0))/P;ms=S.qb==='std'?v3*1.2/3600:v3/3600/sv;
+        ts=tr-Qs/(ms*(1.006+1.86*Wsup));Wsup=(hr-(Qs+Ql)/ms-1.006*ts)/(2501+1.86*ts);}}
+    if(!(Wsup>=0))return {err:'The latent load is too large for this airflow: supply air would need negative moisture. Raise the airflow or lower the supply temperature.'};
+    if(Wsup>Ws(ts,P)*1.0005)return {err:'Supply air would be above saturation. Raise the supply temperature (or airflow) for this SHR.'};
+    t2=ts;W2=Wsup;m=ms;mt=ms;o.room=true;o.Qs=Qs;o.Ql=Ql;o.rshr=Qs/(Qs+Ql);
+    const g=k=>{const t=tr+k*(ts-tr),W=s1.W+k*(Wsup-s1.W);return W-Ws(t,P);};
+    if(g(1)<0){let hi=1;while(g(hi)<0&&hi<200)hi*=1.5;if(g(hi)>=0){const k=bis(g,1,hi);o.shrAdp=tr+k*(ts-tr);}}
+    break;}
   }
   if(!isFinite(t2)||!isFinite(W2))return {err:'Could not solve this process. Check the values.'};
   if(t2<-40||t2>90)return {err:'The result falls outside −40 to 90 °C.'};
   if(W2>Ws(t2,P)*1.0005)return {err:'The result lies above the saturation line. Reduce the amount.'};
   const s=state(t2,Math.max(W2,0),P);
   o.s=s;o.q=mt*s.v*3600;o.m=mt;
-  if(pr.type!=='mix'){o.tot=m*(s.h-s1.h);o.sens=m*(1.006+1.86*s.W)*(s.db-s1.db);o.lat=o.tot-o.sens;o.dw=m*(s.W-s1.W)*3600;}
+  if(pr.type!=='mix'&&pr.type!=='room'){o.tot=m*(s.h-s1.h);o.sens=m*(1.006+1.86*s.W)*(s.db-s1.db);o.lat=o.tot-o.sens;o.dw=m*(s.W-s1.W)*3600;}
   return o;
 }
 
@@ -565,12 +635,12 @@ function runProc(pr,P){
 const COLORS=['#d1495b','#2e86ab','#e09f3e','#3a8c5c','#8a63b8','#c46a2a','#5a7d9a','#b04f86'];
 let uid=1;
 let S;
-function blank(){return {v:2,sys:'si',qu:'cfm',cu:'kw',alt:0,dtype:'psy',layers:{rh:true,wb:true,h:true,v:false,g:true},
+function blank(){return {v:2,sys:'si',qu:'cfm',cu:'kw',qb:'act',cwdt:5.5,hwdt:11,alt:0,dtype:'psy',layers:{rh:true,wb:true,h:true,v:false,g:true,cz:false},
   points:[],procs:[],sel:null,psel:null,draft:null,load:{a:null,b:null}};}
 function addInput(name,def,q){const p={id:uid++,name,def,q};S.points.push(p);return p;}
 function addProc(pr,name){pr.id=uid++;const out={id:uid++,name,proc:pr.id};pr.out=out.id;S.procs.push(pr);S.points.push(out);return pr;}
 function newDraft(type,src){const md=MODES[type][0].k,dv=DEF[type][md];
-  return {type,mode:md,src:src||(S.points[0]&&S.points[0].id),src2:(S.points[1]&&S.points[1].id),v1:dv[0],v2:dv[1],name:''};}
+  return {type,mode:md,src:src||(S.points[0]&&S.points[0].id),src2:(S.points[1]&&S.points[1].id),v1:dv[0],v2:dv[1],v3:dv[2],name:''};}
 function defaults(){
   S=blank();uid=1;
   const o=addInput('Outdoor',{a:'db',av:40,b:'wb',bv:26},400*1.699011);
@@ -595,14 +665,14 @@ function compute(){const P=Pa();
   S.points.forEach(p=>{p._err=null;p._s=null;p._r=null;
     if(p.proc){const pr=procById(p.proc);const r=pr?runProc(pr,P):{err:'Process missing.'};
       if(r.err){p._err=r.err;p._q=NaN;}else{p._s=r.s;p._q=r.q;p._r=r;}}
-    else{const s=solveDef(p.def,P);p._q=+p.q;if(s.err)p._err=s.err;else p._s=s;}});
+    else{const s=solveDef(p.def,P);if(s.err){p._err=s.err;p._q=NaN;}else{p._s=s;p._q=p.basis==='std'?(+p.qin)*1.2*s.v:+p.q;}}});
 }
 function uniqueName(base){let n=base,i=2;while(S.points.some(p=>p.name===n))n=base+' '+(i++);return n;}
 function deletePoint(pid){
   const p=byId(pid);if(!p)return;
   S.points=S.points.filter(x=>x.id!==pid);
   if(p.proc)S.procs=S.procs.filter(x=>x.id!==p.proc);
-  S.procs.filter(pr=>pr.src===pid||pr.src2===pid).forEach(pr=>deletePoint(pr.out));
+  S.procs.filter(pr=>pr.src===pid||(TWO(pr.type)&&pr.src2===pid)).forEach(pr=>deletePoint(pr.out));
 }
 
 /* ================= render ================= */
@@ -614,7 +684,8 @@ function renderAll(){
   buildU();compute();const P=Pa();
   document.querySelectorAll('#sys button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.sys));
   document.querySelectorAll('#dtype button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.dtype));
-  $('qu').value=S.qu;$('cu').value=S.cu;
+  $('qu').value=S.qu;$('cu').value=S.cu;$('qb').value=S.qb||'act';
+  document.querySelectorAll('.dtlab').forEach(e=>e.textContent=U.dT.lab);setV($('cwdt'),fmt(U.dT.to(S.cwdt),1));setV($('hwdt'),fmt(U.dT.to(S.hwdt),1));
   $('altu').textContent=U.alt.lab;setV($('alt'),fmt(U.alt.to(S.alt),0));
   $('pr').textContent=fu(U.P,P)+' '+U.P.lab;
   document.querySelectorAll('.qlab').forEach(e=>e.textContent=U.q.lab);
@@ -625,13 +696,13 @@ function renderAll(){
   showReadout(null);draw();save();
 }
 function renderPointEditor(){
-  const p=byId(S.sel),inputs=['e-name','e-a','e-av','e-b','e-bv','e-q','del'];
+  const p=byId(S.sel),inputs=['e-name','e-a','e-av','e-b','e-bv','e-q','del','dup'];
   inputs.forEach(i=>$(i).disabled=!p);
   const plist=Object.entries(PROPS);
   if(!p){$('e-derived').hidden=true;$('e-err').hidden=true;return;}
   setV($('e-name'),p.name);
   const der=!!p.proc;
-  ['e-a','e-av','e-b','e-bv','e-q'].forEach(i=>$(i).disabled=der);
+  ['e-a','e-av','e-b','e-bv','e-q','dup'].forEach(i=>$(i).disabled=der);
   $('e-derived').hidden=!der;
   if(der){const pr=procById(p.proc),src=pr&&byId(pr.src);
     $('e-derived').innerHTML=`Calculated by the <b>${esc(TNAME[pr.type])}</b> process from “${esc(src?src.name:'?')}”. Edit the process to change it. <button class="ghost" id="e-goto" style="margin-left:4px;padding:2px 8px">Edit process</button>`;
@@ -640,12 +711,12 @@ function renderPointEditor(){
     opts($('e-a'),plist,'db');opts($('e-b'),plist,'rh');
     $('e-avl').textContent='Value ('+U.T.lab+')';$('e-bvl').textContent='Value (%)';
     $('e-av').value=s?fmt(U.T.to(s.db),U.T.d):'';$('e-bv').value=s?fmt(s.rh,1):'';
-    $('e-q').value=isFinite(p._q)?fmt(U.q.to(p._q),0):'';
+    $('e-q').value=fmt(U.q.to(dispQ(p._q,p._s)),0);
   }else{
     opts($('e-a'),plist,p.def.a);opts($('e-b'),plist,p.def.b);
     $('e-avl').textContent='Value ('+propU(p.def.a).lab+')';$('e-bvl').textContent='Value ('+propU(p.def.b).lab+')';
     setV($('e-av'),inVal(propU(p.def.a),p.def.av));setV($('e-bv'),inVal(propU(p.def.b),p.def.bv));
-    setV($('e-q'),fmt(U.q.to(p.q),0));
+    setV($('e-q'),p._s?fmt(U.q.to(dispQ(p._q,p._s)),0):fmt(U.q.to(p.basis==='std'?p.qin:p.q),0));
   }
   $('e-err').hidden=!p._err;$('e-err').textContent=p._err||'';
 }
@@ -663,11 +734,12 @@ function renderProcEditor(){
   const lim=ex?S.points.findIndex(p=>p.id===pr.out):S.points.length;
   const srcs=S.points.slice(0,lim<0?S.points.length:lim).map(p=>[p.id,p.name]);
   opts($('pe-src'),srcs,pr.src);pr.src=+$('pe-src').value||pr.src;
-  $('pe-srcl').textContent=pr.type==='mix'?'Stream A':'Entering point';
-  $('pe-src2w').hidden=pr.type!=='mix';
-  if(pr.type==='mix'){if(!byId(pr.src2)||pr.src2===pr.src){const alt=srcs.find(s=>s[0]!==pr.src);pr.src2=alt?alt[0]:pr.src;}opts($('pe-src2'),srcs,pr.src2);}
+  $('pe-srcl').textContent=pr.type==='mix'?'Stream A':pr.type==='hr'?'Fresh (supply-side) air':pr.type==='room'?'Room condition':'Entering point';
+  $('pe-src2l').textContent=pr.type==='hr'?'Exhaust air':'With point (stream B)';
+  $('pe-src2w').hidden=!TWO(pr.type);
+  if(TWO(pr.type)){if(!byId(pr.src2)||pr.src2===pr.src){const alt=srcs.find(s=>s[0]!==pr.src);pr.src2=alt?alt[0]:pr.src;}opts($('pe-src2'),srcs,pr.src2);}
   const f=(w,l,inp,spec,val)=>{$(w).hidden=!spec;if(!spec)return;const u=kindU(spec[1]);$(l).textContent=spec[0]+(u.lab?' ('+u.lab+')':'');setV($(inp),inVal(u,val));};
-  f('pe-v1w','pe-v1l','pe-v1',md.f1,pr.v1);f('pe-v2w','pe-v2l','pe-v2',md.f2,pr.v2);
+  f('pe-v1w','pe-v1l','pe-v1',md.f1,pr.v1);f('pe-v2w','pe-v2l','pe-v2',md.f2,pr.v2);f('pe-v3w','pe-v3l','pe-v3',md.f3,pr.v3);
   if(ex){const o=byId(pr.out);setV($('pe-name'),o?o.name:'');}else setV($('pe-name'),pr.name||uniqueName(ONAME[pr.type]));
   $('pe-add').hidden=ex;$('pe-del').hidden=!ex;
   let err='';
@@ -676,7 +748,7 @@ function renderProcEditor(){
   $('pe-err').hidden=!err;$('pe-err').textContent=err;
 }
 function cols(){return [['DB',U.T.lab],['WB',U.T.lab],['DP',U.T.lab],['RH','%'],['W',U.W.lab],['h',U.h.lab],['v',U.v.lab],['Density',U.rho.lab],['Airflow',U.q.lab]];}
-function rowVals(s,q){return [fu(U.T,s.db),fu(U.T,s.wb),fu(U.T,s.dp),fmt(s.rh,1),fu(U.W,s.W),fu(U.h,s.h),fu(U.v,s.v),fu(U.rho,s.rho),fmt(U.q.to(q),0)];}
+function rowVals(s,q){return [fu(U.T,s.db),fu(U.T,s.wb),fu(U.T,s.dp),fmt(s.rh,1),fu(U.W,s.W),fu(U.h,s.h),fu(U.v,s.v),fu(U.rho,s.rho),fmt(U.q.to(dispQ(q,s)),0)];}
 function srcLabel(p){if(!p.proc)return 'Input: '+PROPS[p.def.a]+' + '+PROPS[p.def.b];const pr=procById(p.proc);return pr?TNAME[pr.type]:'';}
 function renderTable(){
   $('th').innerHTML='<tr><th>Point</th>'+cols().map(([a,b])=>`<th>${a}<br><small>${b}</small></th>`).join('')+'<th style="text-align:left">Defined by</th></tr>';
@@ -687,25 +759,40 @@ function kv(l,v,u,cls){return `<div class="${cls||''}"><b>${l}</b><span>${v}</sp
 function procFacts(pr){
   const o=byId(pr.out),r=o&&o._r,A=byId(pr.src);if(!r)return null;const f=[];const s1=A._s,s=r.s;
   const capPair=(l,x,big)=>f.push([l,fu(U.cap,Math.abs(x)),U.cap.lab,big]);
+  const wflow=(l,kw,dt)=>{const ls=Math.abs(kw)/(4.186*dt);f.push([l+' at '+fmt(U.dT.to(dt),1)+' '+U.dT.lab+' ΔT',S.sys==='ip'?fmt(ls*15.8503,1):fmt(ls,2),S.sys==='ip'?'USGPM':'L/s · '+fmt(ls*15.8503,1)+' USGPM']);};
   switch(pr.type){
-    case 'heat':capPair('Heating capacity',r.tot,1);f.push(['Temperature rise',fmt(U.dT.to(s.db-s1.db),1),U.dT.lab]);f.push(['Leaving DB',fu(U.T,s.db),U.T.lab]);f.push(['Leaving RH',fmt(s.rh,1),'%']);break;
+    case 'heat':capPair('Heating capacity',r.tot,1);f.push(['Temperature rise',fmt(U.dT.to(s.db-s1.db),1),U.dT.lab]);f.push(['Leaving DB',fu(U.T,s.db),U.T.lab]);f.push(['Leaving RH',fmt(s.rh,1),'%']);wflow('Hot water',r.tot,S.hwdt);break;
     case 'cool':capPair('Total cooling capacity',-r.tot,1);capPair('Sensible',-r.sens);capPair('Latent',-r.lat);
       f.push(['Sensible heat factor',fmt(shf(r.sens,r.tot),2),'']);
-      f.push(['Condensate',fu(U.mw,-r.dw),U.mw.lab]);
+      f.push(['Condensate',fu(U.mw,-r.dw),U.mw.lab]);wflow('Chilled water',r.tot,S.cwdt);
       if(isFinite(r.adp)){f.push(['ADP',fu(U.T,r.adp),U.T.lab]);f.push(['Bypass factor',fmt(r.bf,2),'']);}
       f.push(['Leaving DB / WB',fu(U.T,s.db)+' / '+fu(U.T,s.wb),U.T.lab]);f.push(['Leaving RH',fmt(s.rh,1),'%']);break;
     case 'steam':f.push(['Steam amount',fu(U.mw,r.water),U.mw.lab,1]);capPair('Humidifier load',r.tot);f.push(['Leaving DB',fu(U.T,s.db),U.T.lab]);f.push(['Leaving RH',fmt(s.rh,1),'%']);f.push(['Leaving W',fu(U.W,s.W),U.W.lab]);break;
     case 'water':f.push(['Water evaporated',fu(U.mw,r.water),U.mw.lab,1]);f.push(['Saturation efficiency',fmt(r.eff,1),'%']);f.push(['Leaving DB',fu(U.T,s.db),U.T.lab]);f.push(['Leaving RH',fmt(s.rh,1),'%']);f.push(['Temperature drop',fmt(U.dT.to(s1.db-s.db),1),U.dT.lab]);break;
     case 'mix':{const B=byId(pr.src2);f.push(['Mixed airflow',fmt(U.q.to(r.q),0),U.q.lab,1]);f.push([A.name+' share',fmt(r.fa*100,1),'% mass']);f.push([(B?B.name:'B')+' share',fmt((1-r.fa)*100,1),'% mass']);
-      f.push(['Mixed DB / WB',fu(U.T,s.db)+' / '+fu(U.T,s.wb),U.T.lab]);f.push(['Mixed RH',fmt(s.rh,1),'%']);break;}
+      f.push(['Mixed DB / WB',fu(U.T,s.db)+' / '+fu(U.T,s.wb),U.T.lab]);f.push(['Mixed RH',fmt(s.rh,1),'%']);
+      if(pr.mode==='pct'){f.push([A.name+' airflow',fmt(U.q.to(dispQ(r.ma*3600*s1.v,s1)),0),U.q.lab]);if(B&&B._s)f.push([B.name+' airflow',fmt(U.q.to(dispQ(r.mb*3600*B._s.v,B._s)),0),U.q.lab]);}break;}
+    case 'hr':{capPair(r.tot<0?'Energy recovered (cooling)':'Energy recovered (heating)',r.tot,1);capPair('Sensible',r.sens);capPair('Latent',r.lat);
+      if(S.cu!=='tr')f.push(['Recovered in TR',fmt(Math.abs(r.tot)/3.51685,2),'TR']);
+      f.push(['Supply leaving DB / WB',fu(U.T,s.db)+' / '+fu(U.T,s.wb),U.T.lab]);f.push(['Supply leaving RH',fmt(s.rh,1),'%']);
+      f.push(['Exhaust leaving DB',fu(U.T,r.ex.db),U.T.lab]);f.push(['Exhaust leaving RH',fmt(r.ex.rh,1),'%']);
+      f.push(['Exhaust / supply mass',fmt(r.ratio,2),'']);if(r.cond)f.push(['Note','Condenses','on supply side']);break;}
+    case 'room':{f.push(['Required supply airflow',fmt(U.q.to(dispQ(r.q,s)),0),U.q.lab,1]);
+      f.push(['Supply DB / WB',fu(U.T,s.db)+' / '+fu(U.T,s.wb),U.T.lab]);f.push(['Supply RH',fmt(s.rh,1),'%']);f.push(['Supply W',fu(U.W,s.W),U.W.lab]);
+      f.push(['Room SHR',fmt(r.rshr,2),'']);f.push(['Room − supply ΔT',fmt(U.dT.to(s1.db-s.db),1),U.dT.lab]);
+      capPair('Room total load',r.Qs+r.Ql);
+      f.push(['Coil ADP on room SHR line',isFinite(r.shrAdp)?fu(U.T,r.shrAdp):'none',isFinite(r.shrAdp)?U.T.lab:'line misses saturation']);break;}
   }
   return f;
 }
 function procTitle(pr){const A=byId(pr.src),B=byId(pr.src2),O=byId(pr.out);
-  return pr.type==='mix'?`${A?A.name:'?'} + ${B?B.name:'?'} → ${O?O.name:'?'}`:`${A?A.name:'?'} → ${O?O.name:'?'}`;}
+  if(pr.type==='mix')return `${A?A.name:'?'} + ${B?B.name:'?'} → ${O?O.name:'?'}`;
+  if(pr.type==='hr')return `${A?A.name:'?'} ⇄ ${B?B.name:'?'} → ${O?O.name:'?'}`;
+  if(pr.type==='room')return `${O?O.name:'?'} → ${A?A.name:'?'}`;
+  return `${A?A.name:'?'} → ${O?O.name:'?'}`;}
 function procSetting(pr){const md=modeOf(pr);let t=md.l;
-  const part=spec=>spec?spec[0]+' '+fmt(kindU(spec[1]).to(spec===md.f1?pr.v1:pr.v2),kindU(spec[1]).d)+(kindU(spec[1]).lab?' '+kindU(spec[1]).lab:''):'';
-  const ps=[part(md.f1),part(md.f2)].filter(Boolean);return ps.length?t+': '+ps.join(', '):t;}
+  const part=spec=>spec?spec[0]+' '+fmt(kindU(spec[1]).to(spec===md.f1?pr.v1:spec===md.f2?pr.v2:pr.v3),kindU(spec[1]).d)+(kindU(spec[1]).lab?' '+kindU(spec[1]).lab:''):'';
+  const ps=[part(md.f1),part(md.f2),part(md.f3)].filter(Boolean);return ps.length?t+': '+ps.join(', '):t;}
 function renderCards(){
   if(!S.procs.length){$('cards').innerHTML='<p class="hint">No processes yet. Choose a type in the Process panel and add one.</p>';return;}
   $('cards').innerHTML=S.procs.map(pr=>{const o=byId(pr.out),f=procFacts(pr);
@@ -715,17 +802,18 @@ function renderCards(){
 function loadCalc(){
   const a=byId(S.load.a),b=byId(S.load.b);if(!a||!b||!a._s||!b._s)return {err:'Pick two valid points.'};
   if(a.id===b.id)return {err:'Pick two different points.'};
-  const A=a._s,B=b._s,m=a._q/3600/A.v;if(!(m>0))return {err:'The entering point needs an airflow above zero.'};
+  const A=a._s,B=b._s,m=a._q/3600/A.v;if(!(m>0))return {err:'“'+a.name+'” has no airflow. Pick an entering point that has one, or give it an airflow in the Point panel.'};
   const tot=m*(A.h-B.h),sen=m*(1.006+1.86*B.W)*(A.db-B.db);return {a,A,B,m,tot,sen,lat:tot-sen,mw:m*(A.W-B.W)*3600};
 }
 function renderLoad(){
   const l=S.points.map(p=>[p.id,p.name]);opts($('l-a'),l,S.load.a);opts($('l-b'),l,S.load.b);S.load.a=+$('l-a').value;S.load.b=+$('l-b').value;
   const r=loadCalc();
   if(r.err){$('l-res').innerHTML=`<div class="err" style="background:none">${r.err}</div>`;$('l-q').textContent='';return;}
-  $('l-q').textContent='Uses the entering airflow of '+fmt(U.q.to(r.a._q),0)+' '+U.q.lab+'. Positive = heat removed.';
-  $('l-res').innerHTML=kv(r.tot>=0?'Total cooling':'Total heating',fu(U.cap,Math.abs(r.tot)),U.cap.lab+(S.cu!=='tr'?' · '+fmt(Math.abs(r.tot)/3.51685,2)+' TR':''),'big')+
+  $('l-q').textContent='Uses the entering airflow of '+fmt(U.q.to(dispQ(r.a._q,r.A)),0)+' '+U.q.lab+'. Positive = heat removed.';
+  $('l-res').innerHTML=kv(r.tot>=0?'Total cooling':'Total heating',fu(U.cap,Math.abs(r.tot)),U.cap.lab+(S.cu!=='tr'&&r.tot>=0?' · '+fmt(Math.abs(r.tot)/3.51685,2)+' TR':''),'big')+
     kv('Sensible',fu(U.cap,r.sen),U.cap.lab)+kv('Latent',fu(U.cap,r.lat),U.cap.lab)+kv('Sensible heat factor',fmt(shf(r.sen,r.tot),2),'')+
-    kv(r.mw>=0?'Moisture removed':'Moisture added',fu(U.mw,Math.abs(r.mw)),U.mw.lab)+kv('ΔT',fmt(U.dT.to(r.A.db-r.B.db),1),U.dT.lab)+kv('Δh',fmt(U.dh.to(r.A.h-r.B.h),2),U.dh.lab)+kv('Dry-air mass flow',fmt(U.mw.to(r.m*3600),0),U.mw.lab);
+    kv(r.mw>=0?'Moisture removed':'Moisture added',fu(U.mw,Math.abs(r.mw)),U.mw.lab)+kv('ΔT',fmt(U.dT.to(r.A.db-r.B.db),1),U.dT.lab)+kv('Δh',fmt(U.dh.to(r.A.h-r.B.h),2),U.dh.lab)+kv('Dry-air mass flow',fmt(U.mw.to(r.m*3600),0),U.mw.lab)+
+    (r.tot>0?kv('Chilled water at '+fmt(U.dT.to(S.cwdt),1)+' '+U.dT.lab+' ΔT',S.sys==='ip'?fmt(r.tot/(4.186*S.cwdt)*15.8503,1):fmt(r.tot/(4.186*S.cwdt),2),S.sys==='ip'?'USGPM':'L/s'):'');
 }
 function showReadout(s,above){
   const ro=$('ro');
@@ -740,7 +828,7 @@ function showReadout(s,above){
 function report(){
   const P=Pa(),pad=(s,n,l)=>{s=String(s);return l?s.padEnd(n):s.padStart(n);};
   const L=[];L.push('PSYCHROMETRIC REPORT');L.push('='.repeat(20));
-  L.push(`Altitude: ${fu(U.alt,S.alt)} ${U.alt.lab}    Barometric pressure: ${fu(U.P,P)} ${U.P.lab}    Units: ${S.sys.toUpperCase()}`);L.push('');
+  L.push(`Altitude: ${fu(U.alt,S.alt)} ${U.alt.lab}    Barometric pressure: ${fu(U.P,P)} ${U.P.lab}    Units: ${S.sys.toUpperCase()}    Airflow: ${S.qb==='std'?'standard air (1.2 kg/m³)':'actual'}`);L.push('');
   L.push('PSYCHROMETRIC POINTS');
   const c=cols(),nw=Math.max(14,...S.points.map(p=>p.name.length))+2;
   L.push(pad('Point',nw,1)+c.map(([a])=>pad(a,10)).join(''));
@@ -749,9 +837,15 @@ function report(){
   L.push('');
   if(S.procs.length){L.push('PROCESSES');
     S.procs.forEach((pr,i)=>{L.push(`${i+1}. ${TNAME[pr.type]}: ${procTitle(pr)}`);L.push('   '+procSetting(pr));
-      const f=procFacts(pr);if(!f){const o=byId(pr.out);L.push('   Error: '+(o&&o._err));}else f.forEach(([l,v,u])=>L.push('   '+pad(l,24,1)+v+(u?' '+u:'')));L.push('');});}
+      const f=procFacts(pr);if(!f){const o=byId(pr.out);L.push('   Error: '+(o&&o._err));}else f.forEach(([l,v,u])=>L.push('   '+pad(l,34,1)+v+(u?' '+u:'')));L.push('');});}
   const r=loadCalc();if(!r.err){L.push(`LOAD BETWEEN POINTS: ${r.a.name} → ${byId(S.load.b).name}`);
     L.push(`   Total ${fu(U.cap,r.tot)} ${U.cap.lab}, sensible ${fu(U.cap,r.sen)} ${U.cap.lab}, latent ${fu(U.cap,r.lat)} ${U.cap.lab}, SHF ${fmt(shf(r.sen,r.tot),2)}`);}
+  return L.join('\n');
+}
+function csv(){
+  const q=x=>/[",\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x;
+  const c=cols(),L=[['Point',...c.map(([a,b])=>a+' ('+b+')'),'Defined by'].map(q).join(',')];
+  S.points.forEach(p=>L.push([p.name,...(p._s?rowVals(p._s,p._q):c.map(()=>'')),srcLabel(p)].map(x=>q(String(x).replace('—',''))).join(',')));
   return L.join('\n');
 }
 
@@ -771,25 +865,31 @@ function propChange(which){const p=byId(S.sel);if(!p||p.proc)return;const k=$('e
 $('e-a').addEventListener('change',()=>propChange('a'));$('e-b').addEventListener('change',()=>propChange('b'));
 $('e-av').addEventListener('input',e=>{const p=byId(S.sel);if(!p||p.proc||e.target.value==='')return;p.def.av=propU(p.def.a).from(+e.target.value);renderAll();});
 $('e-bv').addEventListener('input',e=>{const p=byId(S.sel);if(!p||p.proc||e.target.value==='')return;p.def.bv=propU(p.def.b).from(+e.target.value);renderAll();});
-$('e-q').addEventListener('input',e=>{const p=byId(S.sel);if(!p||p.proc||e.target.value==='')return;p.q=U.q.from(+e.target.value);renderAll();});
+$('e-q').addEventListener('input',e=>{const p=byId(S.sel);if(!p||p.proc||e.target.value==='')return;const v=U.q.from(+e.target.value);
+  if(S.qb==='std'){p.basis='std';p.qin=v;}else{p.basis='act';p.q=v;}renderAll();});
+$('qb').addEventListener('change',e=>{S.qb=e.target.value;renderAll();});
+$('cwdt').addEventListener('input',e=>{const v=+e.target.value;if(v>0){S.cwdt=U.dT.from(v);renderAll();}});
+$('hwdt').addEventListener('input',e=>{const v=+e.target.value;if(v>0){S.hwdt=U.dT.from(v);renderAll();}});
+$('dup').addEventListener('click',()=>{const p=byId(S.sel);if(!p||p.proc)return;const c=addInput(uniqueName(p.name+' copy'),Object.assign({},p.def),p.q);if(p.basis==='std'){c.basis='std';c.qin=p.qin;}S.sel=c.id;renderAll();$('e-name').focus();$('e-name').select();});
 $('add').addEventListener('click',()=>{const p=addInput(uniqueName('Point'),{a:'db',av:30,b:'rh',bv:50},U.q.from(S.qu==='cfm'?1000:1700));S.sel=p.id;renderAll();$('e-name').focus();$('e-name').select();});
 $('del').addEventListener('click',()=>{const p=byId(S.sel);if(!p)return;
-  const dep=S.procs.filter(pr=>pr.src===p.id||pr.src2===p.id).length;
+  const dep=S.procs.filter(pr=>pr.src===p.id||(TWO(pr.type)&&pr.src2===p.id)).length;
   if(dep&&$('del').dataset.arm!=='1'){$('del').dataset.arm='1';$('del').textContent='Also deletes '+dep+' dependent process'+(dep>1?'es':'')+'. Click again';return;}
   $('del').dataset.arm='';$('del').textContent='Delete point';
   deletePoint(p.id);S.sel=S.points[0]?S.points[0].id:null;renderAll();});
 // process editor
 $('pe-pick').addEventListener('change',e=>{S.psel=e.target.value?+e.target.value:null;if(S.psel){S.sel=procById(S.psel).out;}renderAll();});
-$('pe-type').addEventListener('change',e=>{const pr=curProc();const t=e.target.value;pr.type=t;pr.mode=MODES[t][0].k;[pr.v1,pr.v2]=DEF[t][pr.mode];
+$('pe-type').addEventListener('change',e=>{const pr=curProc();const t=e.target.value;pr.type=t;pr.mode=MODES[t][0].k;[pr.v1,pr.v2,pr.v3]=DEF[t][pr.mode];
   if(!S.psel)pr.name='';else{const o=byId(pr.out);if(o&&Object.values(ONAME).includes(o.name.replace(/ \d+$/,'')))o.name=uniqueName(ONAME[t]);}renderAll();});
-$('pe-mode').addEventListener('change',e=>{const pr=curProc();pr.mode=e.target.value;[pr.v1,pr.v2]=DEF[pr.type][pr.mode];renderAll();});
+$('pe-mode').addEventListener('change',e=>{const pr=curProc();pr.mode=e.target.value;[pr.v1,pr.v2,pr.v3]=DEF[pr.type][pr.mode];renderAll();});
 $('pe-src').addEventListener('change',e=>{curProc().src=+e.target.value;renderAll();});
 $('pe-src2').addEventListener('change',e=>{curProc().src2=+e.target.value;renderAll();});
 $('pe-v1').addEventListener('input',e=>{if(e.target.value==='')return;const pr=curProc();pr.v1=kindU(modeOf(pr).f1[1]).from(+e.target.value);renderAll();});
 $('pe-v2').addEventListener('input',e=>{if(e.target.value==='')return;const pr=curProc();pr.v2=kindU(modeOf(pr).f2[1]).from(+e.target.value);renderAll();});
+$('pe-v3').addEventListener('input',e=>{if(e.target.value==='')return;const pr=curProc();pr.v3=kindU(modeOf(pr).f3[1]).from(+e.target.value);renderAll();});
 $('pe-name').addEventListener('input',e=>{if(S.psel){const o=byId(procById(S.psel).out);if(o){o.name=e.target.value||'Point';renderAll();}}else S.draft.name=e.target.value;});
 $('pe-add').addEventListener('click',()=>{const d=S.draft;const nm=(d.name||'').trim()||uniqueName(ONAME[d.type]);
-  const pr=addProc({type:d.type,mode:d.mode,src:d.src,src2:d.src2,v1:d.v1,v2:d.v2},S.points.some(p=>p.name===nm)?uniqueName(nm):nm);
+  const pr=addProc({type:d.type,mode:d.mode,src:d.src,src2:d.src2,v1:d.v1,v2:d.v2,v3:d.v3},S.points.some(p=>p.name===nm)?uniqueName(nm):nm);
   S.psel=pr.id;S.sel=pr.out;S.draft=newDraft(d.type,pr.out);renderAll();});
 $('pe-del').addEventListener('click',()=>{const pr=procById(S.psel);if(!pr)return;deletePoint(pr.out);S.psel=null;renderAll();});
 $('l-a').addEventListener('change',e=>{S.load.a=+e.target.value;renderAll();});
@@ -798,6 +898,9 @@ $('btn-rep').addEventListener('click',()=>{$('rep').value=report();$('rep-msg').
 $('rep-close').addEventListener('click',()=>{$('modal').hidden=true;});
 $('modal').addEventListener('click',e=>{if(e.target===$('modal'))$('modal').hidden=true;});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').hidden=true;});
+$('rep-csv').addEventListener('click',()=>{const t=csv();
+  const fall=()=>{$('rep').value=t;$('rep').focus();$('rep').select();$('rep-msg').textContent='CSV shown and selected. Press Ctrl+C (or ⌘C), then paste into Excel.';};
+  try{navigator.clipboard.writeText(t).then(()=>{$('rep-msg').textContent='Points copied as CSV. Paste into Excel; each value lands in its own cell.';},fall);}catch(err){fall();}});
 $('rep-copy').addEventListener('click',()=>{const t=$('rep').value;
   const fall=()=>{$('rep').focus();$('rep').select();$('rep-msg').textContent='Text selected. Press Ctrl+C (or ⌘C) to copy.';};
   try{navigator.clipboard.writeText(t).then(()=>{$('rep-msg').textContent='Report copied.';},fall);}catch(err){fall();}});
@@ -852,7 +955,33 @@ const EX=[
  {id:'ip',title:'IP units: US design day',tags:['IP units','Mix air','Cooling coil'],
   desc:'95 °F DB / 75 °F WB outdoor at 500 CFM with 75 °F / 50 % RH return at 1500 CFM, through a coil with a 50 °F ADP and 0.10 bypass factor. Shown in °F, gr/lb, Btu/lb and TR.',
   look:["Mixed 79.9 °F DB / 65.9 °F WB", "Coil 6.71 TR, SHF 0.71, 21.65 lb/h condensate", "Off-coil 53.0 °F DB / 51.8 °F WB"],build(){S.sys='ip';S.cu='tr';const o=pt('Outdoor','db',35,'wb',(75-32)/1.8,500),r=pt('Room return','db',(75-32)/1.8,'rh',50,1500);
-   const m=pc('Mixed',{type:'mix',mode:'mix',src:o,src2:r});const c=pc('Off-coil',{type:'cool',mode:'adp',src:m,v1:10,v2:0.1});S.load={a:m,b:c};S.sel=o;}}
+   const m=pc('Mixed',{type:'mix',mode:'mix',src:o,src2:r});const c=pc('Off-coil',{type:'cool',mode:'adp',src:m,v1:10,v2:0.1});S.load={a:m,b:c};S.sel=o;}},
+ {id:'office',title:'Office supply air from room load',tags:['Room load','SHR line','Cooling coil'],
+  desc:'An office held at 24 °C / 50 % RH with 20 kW sensible and 4 kW latent load. The calculator finds the supply airflow and supply state for a 14 °C supply, and the coil ADP where the room SHR line meets saturation.',
+  look:["Required supply airflow 3420 CFM at 14.0 °C / 12.6 °C WB", "Room SHR 0.83; supply moisture 8.50 g/kg against 9.30 g/kg in the room", "Coil ADP on the room SHR line: 11.2 °C"],build(){const r=pt('Office room','db',24,'rh',50,0);const sp=pc('Required supply',{type:'room',mode:'db',src:r,v1:20,v2:4,v3:14});
+   S.sel=r;}},
+ {id:'pctmix',title:'Fresh-air mixing by percentage',tags:['Mix air','% fresh air'],
+  desc:'An AHU of 3000 CFM total with 30 % fresh air by volume. Outdoor monsoon air at 33 °C / 75 % RH mixes with return air at 24 °C / 55 % RH, then passes a coil at 11 °C ADP. Change the % to see the mixed point slide along the line.',
+  look:["900 CFM outdoor + 2100 CFM return = 3000 CFM (28.9 % by mass)", "Mixed 26.6 °C DB / 21.7 °C WB, 64.9 % RH", "Coil 46.19 kW (13.13 TR), SHF 0.51, chilled water 2.01 L/s at 5.5 K"],build(){const o=pt('Outdoor monsoon','db',33,'rh',75,0),r=pt('Return air','db',24,'rh',55,0);
+   const m=pc('Mixed 30 % FA',{type:'mix',mode:'pct',src:o,src2:r,v1:30,v2:CF(3000)});const c=pc('Off-coil',{type:'cool',mode:'adp',src:m,v1:11,v2:0.1});S.load={a:m,b:c};S.sel=o;}},
+ {id:'wheel',title:'DOAS with an enthalpy wheel',tags:['Heat recovery','Cooling coil','Heating'],
+  desc:'A 2000 CFM fresh-air unit in humid weather (35 °C / 70 % RH). An enthalpy wheel (75 % sensible, 70 % latent effectiveness) exchanges with 1800 CFM of exhaust at 24 °C / 50 % RH before the coil, so the coil only handles what the wheel leaves.',
+  look:["Wheel recovers 36.80 kW (10.46 TR), mostly latent (28.33 kW)", "Coil load falls from 68.63 kW without the wheel (load panel) to 31.82 kW", "Air leaves the wheel at 27.1 °C / 64.5 % RH; exhaust leaves at 32.4 °C"],build(){const o=pt('Outdoor','db',35,'rh',70,2000),e=pt('Exhaust (room)','db',24,'rh',50,1800);
+   const w=pc('After wheel',{type:'hr',mode:'tot',src:o,src2:e,v1:75,v2:70});const c=pc('Off-coil',{type:'cool',mode:'ldb',src:w,v1:12,v2:0.05});
+   pc('Supply',{type:'heat',mode:'db',src:c,v1:16});S.load={a:o,b:c};S.sel=o;}},
+ {id:'plate',title:'Winter plate heat recovery',tags:['Heat recovery','Heating','Steam'],
+  desc:'Winter fresh air at 2 °C / 80 % RH (1500 CFM) is preheated by a plate heat exchanger (60 % sensible) from 1400 CFM of exhaust at 22 °C / 40 % RH, then heated to 22 °C and steam-humidified to 40 % RH.',
+  look:["Plate recovers 9.50 kW and preheats the air from 2.0 to 12.4 °C", "Heater then needs 8.79 kW (0.19 L/s hot water at 11 K)", "Steam 10.57 kg/h brings the supply to 22.4 °C / 40 % RH"],build(){const o=pt('Winter outdoor','db',2,'rh',80,1500),e=pt('Exhaust','db',22,'rh',40,1400);
+   const h=pc('After plate',{type:'hr',mode:'sens',src:o,src2:e,v1:60});const h2=pc('After heater',{type:'heat',mode:'db',src:h,v1:22});
+   pc('Supply',{type:'steam',mode:'rh',src:h2,v1:40});S.sel=o;}},
+ {id:'ot',title:'Operation theatre, 100 % fresh air',tags:['Cooling coil','Heating','Comfort zone'],
+  desc:'An operation theatre held at 21 °C / 50 % RH with 2500 CFM of 100 % fresh air at 40 °C DB / 27 °C WB. A deep coil (BF 0.05) cools to 10 °C to dry the air, and reheat brings it to 16 °C supply. The comfort zone layer is switched on.',
+  look:["Coil 72.29 kW (20.55 TR), SHF 0.55, 45.70 kg/h condensate", "Off-coil 10.0 °C at ADP 8.4 °C; chilled water 3.14 L/s", "Reheat 7.92 kW to a 16.0 °C / 65.1 % RH supply"],build(){S.layers.cz=true;const o=pt('Outdoor','db',40,'wb',27,2500);pt('OT room','db',21,'rh',50,0);
+   const c=pc('Off-coil',{type:'cool',mode:'ldb',src:o,v1:10,v2:0.05});pc('Supply',{type:'heat',mode:'db',src:c,v1:16});S.load={a:o,b:c};S.sel=o;}},
+ {id:'dc',title:'Data hall CRAH airflow',tags:['Room load','Sensible only','Standard air'],
+  desc:'A data hall with 100 kW of IT heat and no latent load. Hot-aisle return is 35 °C / 25 % RH and the CRAH supplies 22 °C. The airflow basis is set to standard air, as CRAH catalogues quote it. The dry coil runs sensible only.',
+  look:["Required airflow 13 286 CFM std for 100 kW at a 13 K ΔT", "Room SHR 1.00: supply keeps the room's 8.76 g/kg moisture", "The SHR line is horizontal and meets saturation at the 12.0 °C dew point"],build(){S.qb='std';const r=pt('Hot-aisle return','db',35,'rh',25,0);const sp=pc('Cold-aisle supply',{type:'room',mode:'db',src:r,v1:100,v2:0,v3:22});
+   S.sel=r;}}
 ];
 let backup=null,toastT=null;
 const resetUid=()=>{uid=Math.max(0,...S.points.map(p=>p.id),...S.procs.map(p=>p.id))+1;};
@@ -933,6 +1062,8 @@ function draw(){
     for(let hd=hs[0];hd<=hs[1];hd+=hs[2]){const hh=U.h.from(hd);const te=hh/1.006;poly(8,f=>{const t=tmin+(te-tmin)*f;return [t,Math.max(0,(hh-1.006*t)/(2501+1.86*t))];});}ctx.setLineDash([]);}
   if(S.layers.wb){ctx.strokeStyle=C.wb;ctx.globalAlpha=.7;const ws=ip?5:5;
     for(let Td=Math.ceil(Tmin/ws)*ws;Td<Tmax;Td+=ws){const tw=U.T.from(Td);const t0=bis(x=>-Wwb(x,tw,P),tw,tw+120);poly(10,f=>{const t=tw+(t0-tw)*f;return [t,Math.max(0,Wwb(t,tw,P))];});}}
+  if(S.layers.cz){ctx.globalAlpha=1;ctx.beginPath();const zp=[];for(let t=20;t<=26.001;t+=0.5)zp.push(Pt(t,Wp(0.3*pws(t),P)));for(let t=26;t>=19.999;t-=0.5)zp.push(Pt(t,Wp(0.6*pws(t),P)));
+    zp.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.closePath();ctx.fillStyle=C.vol;ctx.globalAlpha=.14;ctx.fill();ctx.globalAlpha=.8;ctx.strokeStyle=C.vol;ctx.lineWidth=1.3;ctx.setLineDash([5,3]);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;ctx.lineWidth=1;}
   if(S.layers.rh){ctx.strokeStyle=C.acc;ctx.globalAlpha=.6;for(let r=10;r<100;r+=10)poly(70,f=>{const t=tmin+(tmax-tmin)*f;return [t,Wp(r/100*pws(t),P)];});}
   ctx.globalAlpha=1;ctx.restore();
   // saturation curve
@@ -980,6 +1111,12 @@ function draw(){
   S.procs.forEach(pr=>{const o=byId(pr.out),A=byId(pr.src);if(!o||!o._s||!A||!A._s)return;const sel=pr.id===S.psel;
     const col=sel?C.acc:C.ink;
     if(pr.type==='mix'){const B=byId(pr.src2);if(B&&B._s){arrow(P2(A._s),P2(B._s),C.muted,[5,4]);}arrow(P2(A._s),P2(o._s),col);if(B&&B._s)arrow(P2(B._s),P2(o._s),col);}
+    else if(pr.type==='hr'){const B=byId(pr.src2);if(B&&B._s){arrow(P2(A._s),P2(B._s),C.wb,[2,4]);if(o._r&&o._r.ex){const pe=P2(o._r.ex);arrow(P2(B._s),pe,C.muted,[5,3]);ctx.fillStyle=C.bg;ctx.strokeStyle=C.muted;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(pe[0],pe[1],4,0,7);ctx.fill();ctx.stroke();
+        ctx.fillStyle=C.muted;ctx.font='600 10px '+css('--f-body');ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText('Exhaust out',pe[0]+6,pe[1]+3);ctx.font=(narrow?10:11)+'px '+css('--f-mono');}}arrow(P2(A._s),P2(o._s),col);}
+    else if(pr.type==='room'){const r=o._r;if(r&&isFinite(r.shrAdp)){const pa=Pt(r.shrAdp,Ws(r.shrAdp,P)),pr0=P2(A._s);ctx.strokeStyle=C.sat;ctx.lineWidth=1.2;ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(pr0[0],pr0[1]);ctx.lineTo(pa[0],pa[1]);ctx.stroke();ctx.setLineDash([]);
+        ctx.fillStyle=C.bg;ctx.strokeStyle=C.sat;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(pa[0],pa[1],4,0,7);ctx.fill();ctx.stroke();
+        ctx.fillStyle=C.sat;ctx.font='600 10px '+css('--f-body');ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText('SHR line ADP',pa[0]+6,pa[1]+4);ctx.font=(narrow?10:11)+'px '+css('--f-mono');}
+      arrow(P2(o._s),P2(A._s),col);}
     else{arrow(P2(A._s),P2(o._s),col);
       const r=o._r;if(r&&isFinite(r.adp)){const pa=Pt(r.adp,Ws(r.adp,P));ctx.strokeStyle=C.muted;ctx.lineWidth=1.2;ctx.setLineDash([3,3]);ctx.beginPath();const pe=P2(o._s);ctx.moveTo(pe[0],pe[1]);ctx.lineTo(pa[0],pa[1]);ctx.stroke();ctx.setLineDash([]);
         ctx.fillStyle=C.bg;ctx.strokeStyle=C.sat;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(pa[0],pa[1],4,0,7);ctx.fill();ctx.stroke();
